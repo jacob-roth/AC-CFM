@@ -25,5 +25,9 @@ function settings = get_default_settings()
     settings.fls = 1; % frequency load shed
     settings.mpopt.opf.flow_lim = 'S'; % line flow limit type (S = apparent, P = real, I = current)
     settings.lineflows_current = 0; % 0 for lineflows_power
+    settings.lossless = 0; % 1 for lossless
+    settings.remove_bshunt = 0; % 1 for remove b shunt
+    settings.remove_tap = 0; % 1 for remove tap
+
 end
 

@@ -10,15 +10,18 @@ settings.verbose = 1;
 initial_contingency = 9; % [29,177];
  
 % protection mechanisms
-settings.ol  = 1
-settings.vls = 0
-settings.gl  = 0
-settings.xl  = 0
-settings.fls = 0
+settings.ol  = 1;
+settings.vls = 0;
+settings.gl  = 0;
+settings.xl  = 0;
+settings.fls = 0;
 
-% lineflow calculation settings
-settings.lineflows_current = 1 % vs lineflows_power
-settings.mpopt.opf.flow_lim = 'I'
+% power flow modification settings
+settings.lossless = 1;
+settings.remove_bshunt = 1;
+settings.remove_tap = 1;
+settings.lineflows_current = 1;
+settings.mpopt.opf.flow_lim = 'I';
 
 % apply the model
 % result = accfm(case9, struct('branches', initial_contingency), settings);
@@ -27,9 +30,9 @@ settings.mpopt.opf.flow_lim = 'I'
 result = accfm_comparison(case118_n1_lowdamp, struct('branches', initial_contingency), settings);
 % result_modified = accfm_comparison(case118_n1_lowdamp_modified, struct('branches', initial_contingency), settings);
 
-result = accfm_comparison(modifycase(case118_n1_lowdamp,'1_00__0__0__acopf__1_05'), struct('branches', initial_contingency), settings);
-result = accfm_comparison(modifycase(case118_n1_lowdamp,'1_00__0__0__scacopf__1_05'), struct('branches', initial_contingency), settings);
-result = accfm_comparison(modifycase(case118_n1_lowdamp,'1_00__0__0__exitrates__1e_15__1_05'), struct('branches', initial_contingency), settings);
+result = accfm_comparison(modifycase(case118_n1_lowdamp,'1_00__0__0__acopf__1_05',settings), struct('branches', initial_contingency), settings);
+result = accfm_comparison(modifycase(case118_n1_lowdamp,'1_00__0__0__scacopf__1_05',settings), struct('branches', initial_contingency), settings);
+result = accfm_comparison(modifycase(case118_n1_lowdamp,'1_00__0__0__exitrates__1e_15__1_05',settings), struct('branches', initial_contingency), settings);
 
 % multiple scenarios
 scenarios = []
@@ -214,6 +217,6 @@ end
 
 % out.lim.line
 
-r1 = runpf(modifycase(case118_n1_lowdamp,'1_00__0__0__acopf__1_05'))
-r2 = runpf(modifycase(case118_n1_lowdamp,'1_00__0__0__scacopf__1_05'))
-r3 = runpf(modifycase(case118_n1_lowdamp,'1_00__0__0__exitrates__1e_15__1_05'))
+r1 = runpf(modifycase(case118_n1_lowdamp,'1_00__0__0__acopf__1_05',settings))
+r2 = runpf(modifycase(case118_n1_lowdamp,'1_00__0__0__scacopf__1_05',settings))
+r3 = runpf(modifycase(case118_n1_lowdamp,'1_00__0__0__exitrates__1e_15__1_05',settings))
