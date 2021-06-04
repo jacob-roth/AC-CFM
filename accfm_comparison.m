@@ -77,10 +77,6 @@ function result_cascade = accfm_comparison(network, initial_contingency, setting
     network.G = addnode(network.G, table({'event'}, size(network.bus, 1), {'event'}, load_initial, length(find(network.gen(:, GEN_STATUS) == 1)), length(find(network.branch(:, BR_STATUS) == 1)), 'VariableNames', {'Name', 'Buses', 'Type', 'Load', 'Generators', 'Lines'}));
     network.G = addedge(network.G, table({'root' 'event'}, {'EV'}, 1, 1, NaN, 'VariableNames', {'EndNodes', 'Type', 'Weight', 'Base', 'LS'}));
     
-    % store initial network (for computing current flows...not ideal method)
-    % network_fullsize = network
-    % settings.network_fullsize = network_fullsize
-
     % disable MATLAB warnings
     warning('off', 'MATLAB:nearlySingularMatrix');
     warning('off', 'MATLAB:singularMatrix');
@@ -420,13 +416,9 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                 
                 % get exceeded branches, buses and generators
                 if settings.lineflows_current == 1
-                    % network_fullsize = settings.network_fullsize;
                     nlines = size(network.branch,1);
                     flows = zeros(nlines,1);
                     nb = size(network.bus, 1);
-                    % network.bus(:, BUS_I)
-                    % find(network.bus(:, BUS_I) ~= (1:nb)')
-                    % Y = makeYbus(network_fullsize);
                     for l = 1:nlines
                         L = network.branch(l,:);
                         f = L(F_BUS);
