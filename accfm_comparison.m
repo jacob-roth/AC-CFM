@@ -11,6 +11,10 @@ function result_cascade = accfm_comparison(network, initial_contingency, setting
 
     % define matpower constants
     define_constants;
+
+    if settings.lineflows_current == 1
+        settings.mpopt.opf.flow_lim = 'I'
+    end
     
     % load empty initial contingency if no other specified
     if ~exist('initial_contingency', 'var') || ~isstruct(initial_contingency)
@@ -445,9 +449,13 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                     exceeded_lines = find(round(mean([sqrt(network.branch(:, PF).^2 + network.branch(:, QF).^2) sqrt(network.branch(:, PT).^2 + network.branch(:, QT).^2)], 2), 5) > round(network.branch(:, RATE_A) * settings.ol_scale, 5));
                 end
                 exceeded_buses = find(network.bus(:, BUS_TYPE) ~= NONE & (round(network.bus(:, VM), 3) < network.bus(:, VMIN)) & (network.bus(:, PD) > 0 | network.bus(:, QD) > 0));
-                exceeded_gens_p = find(round(network.gen(:, PG), 5) < network.gen(:, PMIN) & network.gen(:, GEN_STATUS) == 1);
-                exceeded_gens_q = find(round(network.gen(:, QG) - network.gen(:, QMIN), 5) < -abs(settings.Q_tolerance * network.gen(:, QMIN)) | round(network.gen(:, QG) - network.gen(:, QMAX), 5) > abs(settings.Q_tolerance * network.gen(:, QMAX)));
-                
+                if settings.xl == 1 && settings.gl == 1
+                    exceeded_gens_p = find(round(network.gen(:, PG), 5) < network.gen(:, PMIN) & network.gen(:, GEN_STATUS) == 1);
+                    exceeded_gens_q = find(round(network.gen(:, QG) - network.gen(:, QMIN), 5) < -abs(settings.Q_tolerance * network.gen(:, QMIN)) | round(network.gen(:, QG) - network.gen(:, QMAX), 5) > abs(settings.Q_tolerance * network.gen(:, QMAX)));
+                else
+                    exceeded_gens_p = []
+                    exceeded_gens_q = []
+                end
                 %% O/UXL
                 if settings.xl == 1
 

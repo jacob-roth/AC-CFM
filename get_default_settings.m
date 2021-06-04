@@ -17,12 +17,13 @@ function settings = get_default_settings()
     settings.Q_tolerance = 0.1;
     settings.grid_forming = {'PS', 'ST', 'GT'};
     settings.keep_networks_after_cascade = 0;
-    settings.ol_scale = 1.01
-    settings.ol  = 1
-    settings.vls = 1
-    settings.gl  = 1
-    settings.xl  = 1
-    settings.fls = 1
-    settings.lineflows_current = 1 % 0 for lineflows_power
+    settings.ol_scale = 1.01;
+    settings.ol  = 1; % overload lines
+    settings.vls = 1; % voltage load shed
+    settings.gl  = 1; % generator limits
+    settings.xl  = 1; % excitation limits
+    settings.fls = 1; % frequency load shed
+    settings.mpopt.opf.flow_lim = 'S'; % line flow limit type (S = apparent, P = real, I = current)
+    settings.lineflows_current = 0; % 0 for lineflows_power
 end
 
