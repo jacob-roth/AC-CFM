@@ -77,6 +77,10 @@ function result_cascade = accfm_comparison(network, initial_contingency, setting
     network.G = addnode(network.G, table({'event'}, size(network.bus, 1), {'event'}, load_initial, length(find(network.gen(:, GEN_STATUS) == 1)), length(find(network.branch(:, BR_STATUS) == 1)), 'VariableNames', {'Name', 'Buses', 'Type', 'Load', 'Generators', 'Lines'}));
     network.G = addedge(network.G, table({'root' 'event'}, {'EV'}, 1, 1, NaN, 'VariableNames', {'EndNodes', 'Type', 'Weight', 'Base', 'LS'}));
     
+    % store initial network (for computing current flows...not ideal method)
+    % network_fullsize = network
+    % settings.network_fullsize = network_fullsize
+
     % disable MATLAB warnings
     warning('off', 'MATLAB:nearlySingularMatrix');
     warning('off', 'MATLAB:singularMatrix');
@@ -415,7 +419,39 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
             if ~conditions_changed
                 
                 % get exceeded branches, buses and generators
-                exceeded_lines = find(round(mean([sqrt(network.branch(:, PF).^2 + network.branch(:, QF).^2) sqrt(network.branch(:, PT).^2 + network.branch(:, QT).^2)], 2), 5) > round(network.branch(:, RATE_A) * 1.01, 5));
+                if settings.lineflows_current == 1
+                    % network_fullsize = settings.network_fullsize;
+                    nlines = size(network.branch,1);
+                    flows = zeros(nlines,1);
+                    nb = size(network.bus, 1);
+                    % network.bus(:, BUS_I)
+                    % find(network.bus(:, BUS_I) ~= (1:nb)')
+                    % Y = makeYbus(network_fullsize);
+                    for l = 1:nlines
+                        L = network.branch(l,:);
+                        f = L(F_BUS);
+                        t = L(T_BUS);
+                        ff = find(network.bus(:,BUS_I) == f);
+                        tt = find(network.bus(:,BUS_I) == t);
+                        Yabs2 = abs(L(BR_R) / (L(BR_R)^2 + L(BR_X)^2) - 1i * (L(BR_X) / (L(BR_R)^2 + L(BR_X)^2)))^2;
+                        Vm_f = network.bus(ff,VM);
+                        Vm_t = network.bus(tt,VM);
+                        Va_f = network.bus(ff,VA);
+                        Va_t = network.bus(tt,VA);
+                        if L(TAP) == 0.0
+                            t = exp(1i * L(SHIFT));
+                        else
+                            t = L(TAP) * exp(1i*pi/180 * L(SHIFT));
+                        end
+                        a = real(t);
+                        b = imag(t);
+                        current = sqrt( (Vm_f^2 + (a^2 + b^2) * Vm_t^2 - 2 * Vm_f * Vm_t * ( a * cos(Va_f - Va_t) + b * sin(Va_f - Va_t) ))*(Yabs2/(a^2 + b^2)^2) );
+                        flows(l) = current;
+                    end
+                    exceeded_lines = find(round(flows, 5) > round(network.branch(:, RATE_A) * settings.ol_scale, 5));
+                else
+                    exceeded_lines = find(round(mean([sqrt(network.branch(:, PF).^2 + network.branch(:, QF).^2) sqrt(network.branch(:, PT).^2 + network.branch(:, QT).^2)], 2), 5) > round(network.branch(:, RATE_A) * settings.ol_scale, 5));
+                end
                 exceeded_buses = find(network.bus(:, BUS_TYPE) ~= NONE & (round(network.bus(:, VM), 3) < network.bus(:, VMIN)) & (network.bus(:, PD) > 0 | network.bus(:, QD) > 0));
                 exceeded_gens_p = find(round(network.gen(:, PG), 5) < network.gen(:, PMIN) & network.gen(:, GEN_STATUS) == 1);
                 exceeded_gens_q = find(round(network.gen(:, QG) - network.gen(:, QMIN), 5) < -abs(settings.Q_tolerance * network.gen(:, QMIN)) | round(network.gen(:, QG) - network.gen(:, QMAX), 5) > abs(settings.Q_tolerance * network.gen(:, QMAX)));

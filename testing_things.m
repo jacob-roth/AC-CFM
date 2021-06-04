@@ -16,11 +16,24 @@ settings.gl  = 0
 settings.xl  = 0
 settings.fls = 0
 
+% lineflow calculation settings
+settings.lineflows_current = 1 % vs lineflows_power
+
 % apply the model
 % result = accfm(case9, struct('branches', initial_contingency), settings);
 % result = accfm(case39, struct('branches', initial_contingency), settings);
 result = accfm(case118_n1_lowdamp, struct('branches', initial_contingency), settings);
 result = accfm_comparison(case118_n1_lowdamp, struct('branches', initial_contingency), settings);
+result_modified = accfm_comparison(case118_n1_lowdamp_modified, struct('branches', initial_contingency), settings);
+
+mpc = loadcase('case118_n1_lowdamp')
+mpc = toggle_iflims(mpc, 'on');
+
+resI = runopf(case118_n1_lowdamp, mpoption(settings.mpopt, 'opf.flow_lim', 'I'))
+resP = runopf(case118_n1_lowdamp, mpoption(settings.mpopt, 'opf.flow_lim', 'P'))
+res0 = runopf(case118_n1_lowdamp)
+
+out.lim.line
 
 % %%%%%%%%%
 % % testing

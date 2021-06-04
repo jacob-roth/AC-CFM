@@ -17,5 +17,12 @@ function settings = get_default_settings()
     settings.Q_tolerance = 0.1;
     settings.grid_forming = {'PS', 'ST', 'GT'};
     settings.keep_networks_after_cascade = 0;
+    settings.ol_scale = 1.01
+    settings.ol  = 1
+    settings.vls = 1
+    settings.gl  = 1
+    settings.xl  = 1
+    settings.fls = 1
+    settings.lineflows_current = 1 % 0 for lineflows_power
 end
 
