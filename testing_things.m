@@ -11,7 +11,7 @@ initial_contingency = 9; % [29,177];
  
 % protection mechanisms
 settings.ol  = 1;
-settings.vls = 0;
+settings.vls = 1;
 settings.gl  = 0;
 settings.xl  = 0;
 settings.fls = 0;
@@ -22,12 +22,14 @@ settings.remove_bshunt = 1;
 settings.remove_tap = 1;
 settings.lineflows_current = 1;
 settings.mpopt.opf.flow_lim = 'I';
+settings.mpopt.pf.flow_lim = 'I';
+settings.mpopt.cpf.flow_lim = 'I';
 
 % apply the model
 % result = accfm(case9, struct('branches', initial_contingency), settings);
 % result = accfm(case39, struct('branches', initial_contingency), settings);
 % result = accfm(case118_n1_lowdamp, struct('branches', initial_contingency), settings);
-result = accfm_comparison(case118_n1_lowdamp, struct('branches', initial_contingency), settings);
+% result = accfm_comparison(case118_n1_lowdamp, struct('branches', initial_contingency), settings);
 % result_modified = accfm_comparison(case118_n1_lowdamp_modified, struct('branches', initial_contingency), settings);
 
 result = accfm_comparison(modifycase(case118_n1_lowdamp,'1_00__0__0__acopf__1_05',settings), struct('branches', initial_contingency), settings);
@@ -36,13 +38,19 @@ result = accfm_comparison(modifycase(case118_n1_lowdamp,'1_00__0__0__exitrates__
 
 % multiple scenarios
 scenarios = []
-for l = 1:186
-  for ll = l:186
-    scenarios = [scenarios, struct('branches', [l,ll])];
+acceptable_lines = [
+    1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; 17; 18; 19; 20; 21; 22; 23; 25; 27; 28; 29; 30; 31; 34; 35; 36; 37; 38; 39; 40; 41; 44; 46; 47; 48; 50; 51; 52; 53; 54; 55; 56; 58; 59; 60; 61; 62; 63; 64; 65; 68; 69; 70; 71; 72; 73; 74; 80; 81; 82; 83; 88; 90; 91; 93; 94; 95; 96; 97; 101; 103; 104; 105; 107; 110; 112; 113; 115; 116; 117; 120; 121; 122; 125; 126; 127; 128; 129; 130; 131; 132; 133; 134; 135; 137; 144; 145; 146; 147; 148; 149; 150; 151; 152; 155; 156; 157; 158; 160; 161; 162; 167; 169; 171; 172; 173; 175; 178; 180; 181; 182; 183; 184; 185; 186
+]
+nl = length(acceptable_lines)
+for l = 1:nl
+  for ll = l+1:nl
+    l1 = acceptable_lines(l);
+    l2 = acceptable_lines(ll);
+    scenarios = [scenarios, struct('branches', [l1,l2])];
   end
 end
-result_scenarios = accfm_branch_scenarios(case118_n1_lowdamp, scenarios, settings)
-
+result_scenarios = accfm_branch_scenarios_comparison(modifycase(case118_n1_lowdamp,'1_00__0__0__acopf__1_05',settings), scenarios(1), settings)
+r = result_scenarios
 
 % %%%%%%%%%
 % % testing
@@ -220,3 +228,19 @@ end
 r1 = runpf(modifycase(case118_n1_lowdamp,'1_00__0__0__acopf__1_05',settings))
 r2 = runpf(modifycase(case118_n1_lowdamp,'1_00__0__0__scacopf__1_05',settings))
 r3 = runpf(modifycase(case118_n1_lowdamp,'1_00__0__0__exitrates__1e_15__1_05',settings))
+
+
+
+scenarios = [];
+acceptable_lines = table2array(readtable('acceptable_lines.csv'));
+al = datasample(acceptable_lines,10,'Replace',false)
+nl = length(al);
+for i = 1:nl
+  for j = i+1:nl
+    l1 = al(i);
+    l2 = al(j);
+    scenarios = [scenarios, struct('branches', [l1,l2])];
+  end
+end
+s = mat2cell(scenarios,1,nl*(nl-1)/2)
+scenarios = s{1}

@@ -1,5 +1,6 @@
-function mpc = modifycase(mpc,fname,settings)
+function mpc = modifycase(mpc0,fname,settings)
   define_constants;
+  mpc = loadcase(mpc0)
   Vm = table2array(readtable(strcat('data/',fname,"/Vm.csv")));
   Va = table2array(readtable(strcat('data/',fname,"/Va.csv")));
   Pg = table2array(readtable(strcat('data/',fname,"/Pg.csv")));
@@ -10,7 +11,7 @@ function mpc = modifycase(mpc,fname,settings)
   mpc.gen(:,QG) = Qg;
   mpc.gen(:,VG) = Vm(mpc.gen(:,GEN_BUS));
   if settings.remove_bshunt == 1
-    mpc.branch(:,BS) = 0;
+    mpc.bus(:,BS) = 0;
   end
   if settings.lossless == 1
     mpc.branch(:,BR_R) = 0;
@@ -18,6 +19,7 @@ function mpc = modifycase(mpc,fname,settings)
   if settings.remove_tap == 1
     mpc.branch(:,TAP) = 0;
   end
+  % if strcmp(fname,'1_00__0__0__exitrates__1e_15__1_05')
+  %   mpc.branch(:,RATE_A) = 10 * mpc.branch(:,RATE_A);
+  % end
 end
-% fname='1_00__0__0__scacopf__1_05'
-% mpc = case118_n1_lowdamp
