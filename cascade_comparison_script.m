@@ -54,7 +54,12 @@ for i = 1:nl
 end
 
 settings.verbose = 0;
-r_1 = accfm_branch_scenarios_comparison(c_1, scenarios, settings)
-r_2 = accfm_branch_scenarios_comparison(c_2, scenarios, settings)
-r_3 = accfm_branch_scenarios_comparison(c_3, scenarios, settings)
+r_1 = accfm_branch_scenarios_comparison(c_1, scenarios, settings);
+r_2 = accfm_branch_scenarios_comparison(c_2, scenarios, settings);
+r_3 = accfm_branch_scenarios_comparison(c_3, scenarios, settings);
 settings.verbose = 1;
+
+save('scens.mat', 'scenarios')
+save('r_1.mat', 'r_1')
+save('r_2.mat', 'r_2')
+save('r_3.mat', 'r_3')
