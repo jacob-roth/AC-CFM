@@ -1,10 +1,10 @@
-function mpc = modifycase(mpc0,fname,settings)
+function mpc = modifycase(mpc,fname,settings)
   define_constants;
-  mpc = loadcase(mpc0)
+  % mpc = loadcase(mpc0);
   Vm = table2array(readtable(strcat('data/',fname,"/Vm.csv")));
   Va = table2array(readtable(strcat('data/',fname,"/Va.csv")));
-  Pg = table2array(readtable(strcat('data/',fname,"/Pg.csv")));
-  Qg = table2array(readtable(strcat('data/',fname,"/Qg.csv")));
+  Pg = 100*table2array(readtable(strcat('data/',fname,"/Pg.csv")));
+  Qg = 100*table2array(readtable(strcat('data/',fname,"/Qg.csv")));
   mpc.bus(:,VM) = Vm;
   mpc.bus(:,VA) = Va;
   mpc.gen(:,PG) = Pg;

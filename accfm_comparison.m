@@ -106,7 +106,7 @@ function result_cascade = accfm_comparison(network, initial_contingency, setting
     result_cascade.elapsed = toc(startTime);
     
     % in verbose mode, display graph
-    if settings.verbose
+    if settings.verbose > 0
         fprintf('Cascade halted. Elapsed time: %.2fs\n', result_cascade.elapsed);
         fprintf('Total load shedding: %.2f%%\n', 100 * result_cascade.ls_total);
         fprintf('Load shedding UFLS: %.2f%% \n', 100 * result_cascade.ls_ufls);
@@ -160,14 +160,14 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
     % SIBLING CASE
     if length(islands) > 1
 
-        if settings.verbose
+        if settings.verbose > 0
             fprintf(repmat(' ', 1, i))
             fprintf('%d islands and %d isolated nodes detected\n', length(groups), length(isolated));
         end
 
         for j = 1:length(islands)
             
-            if settings.verbose
+            if settings.verbose > 0
                 fprintf(repmat(' ', 1, i))
                 fprintf('Island: [');
                 fprintf(repmat(' %d', 1, size(islands{j}, 1)), network.bus(islands{j}, BUS_I));
@@ -232,7 +232,7 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
             network = trip_nodes(network, network.bus(:, BUS_I));
             network.bus_tripped(:, i) = 1;
             
-            if settings.verbose
+            if settings.verbose > 0
                 fprintf(repmat(' ', 1, i - k))
                 
                 if (~isempty(settings.grid_forming) && isfield(network, 'gentype') && ~any(ismember(network.gentype(network.gen(:, GEN_STATUS) == 1), settings.grid_forming)))
@@ -274,6 +274,13 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                 [network, Gnode_parent] = apply_vcls(network, settings, Gnode_parent, i, k);
                 conditions_changed = 1;
             end
+
+            %%% display PG
+            if settings.verbose > 1
+                fprintf('=================================\n')
+                [network.gen(:,BUS_I),network.gen(:,PG)]
+                fprintf('=================================\n')
+            end
             
             if ~conditions_changed
                 try
@@ -296,6 +303,12 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                 if ~network.success
                     [network, Gnode_parent] = apply_vcls(network, settings, Gnode_parent, i, k);
                     conditions_changed = 1;
+                    %%% display PG
+                    if settings.verbose > 1
+                        fprintf('=================================\n')
+                        [network.gen(:,BUS_I),network.gen(:,PG)]
+                        fprintf('=================================\n')
+                    end        
                 end
             end
             
@@ -323,6 +336,12 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                             if settings.verbose
                                 fprintf(repmat(' ', 1, i - k))
                                 fprintf(' Demand increased by %.1f%% (limit is %.1f%%) and generation capacity is met. Distribute slack generation.\n', dG / (sum_g - dG) * 100, settings.dP_limit * 100);
+                            end
+                            %%% display PG
+                            if settings.verbose > 1
+                                fprintf('=================================\n')
+                                [network.gen(:,BUS_I),network.gen(:,PG)]
+                                fprintf('=================================\n')
                             end
                             
                         % changes outside tolerance or limits exceeded
@@ -352,6 +371,12 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                                 fprintf(repmat(' ', 1, i - k))
                                 fprintf(' Demand increased by %.1f%% (limit is %.1f%%) or generation capacity is not met. Perform underfrequency load shedding of %.1f%%.\n', dG / (sum_g - dG) * 100, settings.dP_limit * 100, (1 - ls_factor) * 100);
                             end
+                            %%% display PG
+                            if settings.verbose > 1
+                                fprintf('=================================\n')
+                                [network.gen(:,BUS_I),network.gen(:,PG)]
+                                fprintf('=================================\n')
+                            end
                             
                             Gnode_name = get_hash();
                             network.G = addnode(network.G, table({Gnode_name}, size(network.bus, 1), {''}, sum(network.bus(:, PD)), length(find(network.gen(:, GEN_STATUS) == 1)), length(find(network.branch(:, BR_STATUS) == 1)), 'VariableNames', {'Name', 'Buses', 'Type', 'Load', 'Generators', 'Lines'}));
@@ -368,6 +393,12 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                             if settings.verbose
                                 fprintf(repmat(' ', 1, i - k))
                                 fprintf(' Demand decreased by %.1f%% (limit is %.1f%%). Distribute slack generation.\n', -dG / (sum_g - dG) * 100, settings.dP_limit * 100);
+                            end
+                            %%% display PG
+                            if settings.verbose > 1
+                                fprintf('=================================\n')
+                                [network.gen(:,BUS_I),network.gen(:,PG)]
+                                fprintf('=================================\n')
                             end
                         
                         % changes outside tolerance
@@ -403,6 +434,12 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                             if settings.verbose
                                 fprintf(repmat(' ', 1, i - k))
                                 fprintf(' Demand decreased by %.1f%% (limit is %.1f%%). Tripping %d smallest generators.\n', -(dG / (sum_g - dG)) * 100, settings.dP_limit * 100, gens_to_shed);
+                            end
+                            %%% display PG
+                            if settings.verbose > 1
+                                fprintf('=================================\n')
+                                [network.gen(:,BUS_I),network.gen(:,PG)]
+                                fprintf('=================================\n')
                             end
                             
                             Gnode_name = get_hash();
@@ -445,6 +482,7 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                         current2 = ( (Vm_f^2 + (a^2 + b^2) * Vm_t^2 - 2 * Vm_f * Vm_t * ( a * cos(Va_f - Va_t) + b * sin(Va_f - Va_t) ))*(Yabs2/(a^2 + b^2)^2) );
                         flows(l) = current2;
                     end
+                    fprintf('~~current limit~~\n', '')
                     exceeded_lines = find(round(flows, 5) > round((network.branch(:, RATE_A)/100).^2 * settings.ol_scale, 5));
                 else
                     exceeded_lines = find(round(mean([sqrt(network.branch(:, PF).^2 + network.branch(:, QF).^2) sqrt(network.branch(:, PT).^2 + network.branch(:, QT).^2)], 2), 5) > round(network.branch(:, RATE_A) * settings.ol_scale, 5));
@@ -481,11 +519,17 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                             network.gen(intersect(exceeded_gens_q, find(network.gen(:, QG) > network.gen(:, QMAX))), QG) = network.gen(intersect(exceeded_gens_q, find(network.gen(:, QG) > network.gen(:, QMAX))), QMAX);
                         end
                         
-                        if settings.verbose
+                        if settings.verbose > 0
                             fprintf(repmat(' ', 1, i - k))
                             fprintf(' Q outside limits at generators at buses');
                             fprintf(repmat(' %d', 1, length(exceeded_gens_q)), network.gen(exceeded_gens_q, GEN_BUS));
                             fprintf('\n');
+                            %%% display PG
+                            if settings.verbose > 1
+                                fprintf('=================================\n')
+                                [network.gen(:,BUS_I),network.gen(:,PG)]
+                                fprintf('=================================\n')
+                            end
                         end
                         
                         if isempty(Gnode_name)
@@ -512,11 +556,17 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
 
                         network = add_reference_bus(network);
                         
-                        if settings.verbose
+                        if settings.verbose > 0
                             fprintf(repmat(' ', 1, i - k))
                             fprintf(' Generators at buses tripped due to underload');
                             fprintf(repmat(' %d', 1, length(exceeded_gens_p)), network.gen(exceeded_gens_p, GEN_BUS));
                             fprintf('\n');
+                            %%% display PG
+                            if settings.verbose > 1
+                                fprintf('=================================\n')
+                                [network.gen(:,BUS_I),network.gen(:,PG)]
+                                fprintf('=================================\n')
+                            end
                         end
                         
                         if isempty(Gnode_name)
@@ -533,11 +583,17 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                     if ~isempty(exceeded_buses)
                         % UVLS
 
-                        if settings.verbose
+                        if settings.verbose > 0
                             fprintf(repmat(' ', 1, i - k))
                             fprintf(' Voltage outside limits at buses');
                             fprintf(repmat(' %d', 1, length(exceeded_buses)), network.bus(exceeded_buses, BUS_I));
                             fprintf('\n');
+                            %%% display PG
+                            if settings.verbose > 1
+                                fprintf('=================================\n')
+                                [network.gen(:,BUS_I),network.gen(:,PG)]
+                                fprintf('=================================\n')
+                            end
                         end
 
                         % calculate how often uvls has been applied at each bus
@@ -553,11 +609,17 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                             
                             network.bus(buses_uvls_apply, [PD QD]) = (1 - network.bus_uvls(buses_uvls_apply, i)) .* network.bus(buses_uvls_apply, [PD QD]);
 
-                            if settings.verbose
+                            if settings.verbose > 0
                                 fprintf(repmat(' ', 1, i - k))
                                 fprintf(' Undervoltage load shedding applied at buses');
                                 fprintf(repmat(' %d', 1, length(buses_uvls_apply)), network.bus(buses_uvls_apply, BUS_I));
                                 fprintf('\n');
+                                %%% display PG
+                                if settings.verbose > 1
+                                    fprintf('=================================\n')
+                                    [network.gen(:,BUS_I),network.gen(:,PG)]
+                                    fprintf('=================================\n')
+                                end
                             end
                         end
 
@@ -570,11 +632,17 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                             
                             network.bus_uvls(buses_uvls_exceeded, i) = 1;
 
-                            if settings.verbose
+                            if settings.verbose > 0
                                 fprintf(repmat(' ', 1, i - k))
                                 fprintf(' Loads tripped due to undervoltage at buses');
                                 fprintf(repmat(' %d', 1, length(buses_uvls_exceeded)), network.bus(buses_uvls_exceeded, BUS_I));
                                 fprintf('\n');
+                                %%% display PG
+                                if settings.verbose > 1
+                                    fprintf('=================================\n')
+                                    [network.gen(:,BUS_I),network.gen(:,PG)]
+                                    fprintf('=================================\n')
+                                end
                             end
                         end
                         
@@ -597,11 +665,17 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                         network.branch(exceeded_lines, BR_STATUS) = 0;
                         network.branch_tripped(exceeded_lines, i) = 1;
 
-                        if settings.verbose
+                        if settings.verbose > 0
                             fprintf(repmat(' ', 1, i - k))
                             fprintf(' Exceeded line ratings:');
                             fprintf(repmat(' %d-%d', 1, length(exceeded_lines)), [network.branch(exceeded_lines, 1) network.branch(exceeded_lines, 2)].');
                             fprintf('\n');
+                            %%% display PG
+                            if settings.verbose > 1
+                                fprintf('=================================\n')
+                                [network.gen(:,BUS_I),network.gen(:,PG)]
+                                fprintf('=================================\n')
+                            end
                         end
                         
                         if isempty(Gnode_name)
@@ -832,7 +906,7 @@ function [network, Gnode_parent] = apply_vcls(network, settings, Gnode_parent, i
         
         if opf_success == 1
             
-            if settings.verbose
+            if settings.verbose > 0
                 fprintf(repmat(' ', 1, i - k))
                 fprintf(' Tripping shunt devices');
                 fprintf('\n');
@@ -851,7 +925,7 @@ function [network, Gnode_parent] = apply_vcls(network, settings, Gnode_parent, i
     % if it still doesn't converge, then trip the island
     if opf_success == 0
         % trip island
-        if settings.verbose
+        if settings.verbose > 0
             fprintf(repmat(' ', 1, i - k))
             fprintf(' OPF failed. Check constraints. Island tripped (%d buses).\n', size(network_disp.bus, 1));
         end
@@ -903,7 +977,7 @@ function [network, Gnode_parent, opf_success] = apply_opf(network, network_disp,
             network.bus(ismember(network.bus(:, BUS_I), results_disp.gen(results_disp.gen(:, PMIN) < 0, GEN_BUS)), PD) = -results_disp.gen(results_disp.gen(:, PMIN) < 0, PG);
             network.bus(ismember(network.bus(:, BUS_I), results_disp.gen(results_disp.gen(:, PMIN) < 0, GEN_BUS)), QD) = -results_disp.gen(results_disp.gen(:, PMIN) < 0, QG);
 
-            if settings.verbose
+            if settings.verbose > 0
                 fprintf(repmat(' ', 1, i - k))
                 fprintf(' Loads shed (%.2f%%) due to voltage collapse at buses', ls * 100);
                 fprintf(repmat(' %d', 1, length(loads_shed)), results_disp.gen(loads_shed, GEN_BUS));
@@ -930,7 +1004,7 @@ function [network, Gnode_parent, opf_success] = apply_opf(network, network_disp,
         else
             % no: trip islands
             % trip island
-            if settings.verbose
+            if settings.verbose > 0
                 fprintf(repmat(' ', 1, i - k))
                 fprintf(' OPF converged but PF does not converge. Island tripped (%d buses).\n', size(network_disp.bus, 1));
             end
