@@ -2,6 +2,7 @@ clc;clear;
 
 % load default settings
 settings = get_default_settings();
+settings.seed = 12345
 
 % enable verbose output – just for testing
 settings.verbose = 1;
@@ -49,7 +50,8 @@ for i = 1:nl
   for j = i+1:nl
     l1 = al(i);
     l2 = al(j);
-    scenarios{end+1} = struct('branches', [l1,l2]);
+    % scenarios{end+1} = struct('branches', [l1,l2]);
+    scenarios{end+1} = [l1,l2];
   end
 end
 
@@ -63,3 +65,18 @@ save('scens.mat', 'scenarios')
 save('r_1.mat', 'r_1')
 save('r_2.mat', 'r_2')
 save('r_3.mat', 'r_3')
+
+%
+%%
+%%% zipf contingencies
+settings.seed = 12345
+z_1 = accfm_pdf_batch_comparison(c_1, 'zipf', 3.0, 20, settings, 'z_1.mat');
+z_2 = accfm_pdf_batch_comparison(c_2, 'zipf', 3.0, 20, settings, 'z_1.mat');
+z_3 = accfm_pdf_batch_comparison(c_3, 'zipf', 3.0, 20, settings, 'z_1.mat');
+
+settings.vls = 1;
+settings.gl  = 1;
+settings.xl  = 1;
+settings.fls = 1;
+
+z_1 = accfm_pdf_batch_comparison(case2736sp, 'zipf', 3.0, 20, settings, 'z_1.mat');
