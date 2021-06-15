@@ -16,7 +16,7 @@ settings.vls = 0;
 settings.gl  = 0;
 settings.xl  = 0;
 settings.fls = 0;
-settings.intermediate_failures = 0;
+settings.intermediate_failures = 1;
 settings.ol_scale = 1.0;
 
 % power flow modification settings
@@ -79,4 +79,5 @@ settings.gl  = 1;
 settings.xl  = 1;
 settings.fls = 1;
 
+z_1 = accfm_pdf_batch_comparison(case2736sp, 'zipf', 3.0, 20, settings, 'z_1.mat');
 z_1 = accfm_pdf_batch_comparison(case2736sp, 'zipf', 3.0, 20, settings, 'z_1.mat');

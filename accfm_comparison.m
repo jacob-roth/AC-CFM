@@ -166,7 +166,9 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
         end
 
         for j = 1:length(islands)
-            
+            % if settings.verbose > 1
+            %     fprintf('Island %d \n',j)
+            % end
             if settings.verbose > 0
                 fprintf(repmat(' ', 1, i))
                 fprintf('Island: [');
@@ -212,7 +214,9 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
         
     % if only one island, apply protection mechanmisms
     elseif length(islands) == 1
-        
+        if settings.verbose > 1
+            fprintf(' Single island');
+        end
         Gnode_name = '';
         
         %network_before = network;
@@ -459,6 +463,7 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                 if settings.lineflows_current == 1
                     nlines = size(network.branch,1);
                     flows = zeros(nlines,1);
+                    y2s = zeros(nlines,1);
                     nb = size(network.bus, 1);
                     for l = 1:nlines
                         L = network.branch(l,:);
@@ -467,10 +472,11 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                         ff = find(network.bus(:,BUS_I) == f);
                         tt = find(network.bus(:,BUS_I) == t);
                         Yabs2 = abs(L(BR_R) / (L(BR_R)^2 + L(BR_X)^2) - 1i * (L(BR_X) / (L(BR_R)^2 + L(BR_X)^2)))^2;
+                        y2s(l) = Yabs2;
                         Vm_f = network.bus(ff,VM);
                         Vm_t = network.bus(tt,VM);
-                        Va_f = network.bus(ff,VA);
-                        Va_t = network.bus(tt,VA);
+                        Va_f = network.bus(ff,VA)*pi/180;
+                        Va_t = network.bus(tt,VA)*pi/180;
                         if L(TAP) == 0.0
                             t = exp(1i * L(SHIFT));
                         else
@@ -478,19 +484,18 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                         end
                         a = real(t);
                         b = imag(t);
-                        %% NOT SQRT; leave as squared flow
                         current2 = ( (Vm_f^2 + (a^2 + b^2) * Vm_t^2 - 2 * Vm_f * Vm_t * ( a * cos(Va_f - Va_t) + b * sin(Va_f - Va_t) ))*(Yabs2/(a^2 + b^2)^2) );
                         flows(l) = current2;
                     end
-                    fprintf('~~current limit~~\n', '')
-                    exceeded_lines = find(round(flows, 5) > round((network.branch(:, RATE_A)/100).^2 * settings.ol_scale, 5));
+                    exceeded_lines = find((round(flows, 5) > round((network.branch(:, RATE_A)/100).^2 * settings.ol_scale, 5)) & network.branch(:, BR_STATUS) == 1); % based on: Matthias's email from June 15, 2021
                 else
                     exceeded_lines = find(round(mean([sqrt(network.branch(:, PF).^2 + network.branch(:, QF).^2) sqrt(network.branch(:, PT).^2 + network.branch(:, QT).^2)], 2), 5) > round(network.branch(:, RATE_A) * settings.ol_scale, 5));
                 end
                 exceeded_buses = find(network.bus(:, BUS_TYPE) ~= NONE & (round(network.bus(:, VM), 3) < network.bus(:, VMIN)) & (network.bus(:, PD) > 0 | network.bus(:, QD) > 0));
                 if settings.xl == 1 && settings.gl == 1
                     exceeded_gens_p = find(round(network.gen(:, PG), 5) < network.gen(:, PMIN) & network.gen(:, GEN_STATUS) == 1);
-                    exceeded_gens_q = find(round(network.gen(:, QG) - network.gen(:, QMIN), 5) < -abs(settings.Q_tolerance * network.gen(:, QMIN)) | round(network.gen(:, QG) - network.gen(:, QMAX), 5) > abs(settings.Q_tolerance * network.gen(:, QMAX)));
+                    % exceeded_gens_q = find(round(network.gen(:, QG) - network.gen(:, QMIN), 5) < -abs(settings.Q_tolerance * network.gen(:, QMIN)) | round(network.gen(:, QG) - network.gen(:, QMAX), 5) > abs(settings.Q_tolerance * network.gen(:, QMAX)));
+                    exceeded_gens_q = find((round(network.gen(:, QG) - network.gen(:, QMIN), 5) < -abs(settings.Q_tolerance * network.gen(:, QMIN)) | round(network.gen(:, QG) - network.gen(:, QMAX), 5) > abs(settings.Q_tolerance * network.gen(:, QMAX))) & network.gen(:, GEN_STATUS) == 1); % per: Matthias's email from June 15, 2021
                 else
                     exceeded_gens_p = [];
                     exceeded_gens_q = [];
@@ -703,13 +708,20 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
             % cascade continues
             if sum(network.bus(:, PD)) > 0 && (conditions_changed || ~isempty(exceeded_lines) || ~isempty(exceeded_buses) || ~isempty(exceeded_gens_p) || ~isempty(exceeded_gens_q))
                 % INDUCTION CASE
-                if settings.intermediate_failures == 1
-                    settings.vls = 1;
-                    settings.gl  = 1;
-                    settings.xl  = 1;
-                    settings.fls = 1;
+                % fprintf('=====')
+                % k
+                % fprintf('=====')
+                if k+1 > settings.intermediate_failures
+                    intermediate_settings = settings;
+                    intermediate_settings.vls = 1;
+                    intermediate_settings.gl  = 1;
+                    intermediate_settings.xl  = 1;
+                    intermediate_settings.fls = 1;
+                    intermediate_settings.intermediate_failures = 0;
+                else
+                    intermediate_settings = settings;
                 end
-                network = apply_recursion(network, settings, i + 1, k + 1, Gnode_parent);
+                network = apply_recursion(network, intermediate_settings, i + 1, k + 1, Gnode_parent);
                 
             % cascade halted or no loads
             else

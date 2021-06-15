@@ -23,11 +23,11 @@ function settings = get_default_settings()
     settings.gl  = 1; % generator limits
     settings.xl  = 1; % excitation limits
     settings.fls = 1; % frequency load shed
+    settings.intermediate_failures = 0; % turn on vls/gl/xl/gls after the `k`th depth
     settings.mpopt.opf.flow_lim = 'S'; % line flow limit type (S = apparent, P = real, I = current)
     settings.lineflows_current = 0; % 0 for lineflows_power
     settings.lossless = 0; % 1 for lossless
     settings.remove_bshunt = 0; % 1 for remove b shunt
     settings.remove_tap = 0; % 1 for remove tap
-
 end
 
