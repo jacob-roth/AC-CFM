@@ -41,21 +41,6 @@ r_2_single = accfm_comparison(c_2, struct('branches', initial_contingency), sett
 %
 %%
 %%% test 2: 2736 bus
-clc;clear;
-
-% load default settings
-settings = get_default_settings();
-settings.seed = 12345;
-
-% enable verbose output – just for testing
-settings.verbose = 1;
-
-z_1 = accfm_pdf_batch(case2736sp, 'zipf', 3.0, 3, settings, 'z_1.mat');
-z_r = accfm_pdf_batch(randomizecase(case2736sp,settings), 'zipf', 3.0, 3, settings, 'z_r.mat');
-
-%
-%%
-%%% test 2: 2736bus (lossless + current)
 %%
 %
 clc;clear;
@@ -65,14 +50,51 @@ settings = get_default_settings();
 settings.seed = 12345;
 
 % enable verbose output – just for testing
-settings.verbose = 1;
+settings.verbose = 0;
+
+Nsims = 1000;
+z_1 = accfm_pdf_batch(case2736sp, 'zipf', 2.25, Nsims, settings, 'test2_2736sp.mat');
+z_r = accfm_pdf_batch(randomizecase(case2736sp,settings), 'zipf', 2.25, Nsims, settings, 'test2_2736sp_randomized.mat');
+
+
+%
+%%
+%%% test 2: 2736 bus Q-modified
+%%
+%
+clc;clear;
+
+% load default settings
+settings = get_default_settings();
+settings.seed = 12345;
+
+% enable verbose output – just for testing
+settings.verbose = 0;
+
+Nsims = 1000;
+z_1 = accfm_pdf_batch(case2736sp_Qmodified, 'zipf', 2.25, Nsims, settings, 'test2_2736sp_Qmodified.mat');
+z_r = accfm_pdf_batch(randomizecase(case2736sp_Qmodified,settings), 'zipf', 2.25, Nsims, settings, 'test2_2736sp_Qmodified_randomized.mat');
+
+%
+%%
+%%% test 3: 2736bus (lossless + current)
+%%
+%
+clc;clear;
+
+% load default settings
+settings = get_default_settings();
+settings.seed = 12345;
+
+% enable verbose output – just for testing
+settings.verbose = 0;
 
 settings.ol  = 1;
 settings.vls = 0;
 settings.gl  = 0;
 settings.xl  = 0;
 settings.fls = 0;
-settings.intermediate_failures = 1;
+settings.intermediate_failures = 5;
 settings.ol_scale = 1.0;
 
 % power flow modification settings
@@ -84,11 +106,13 @@ settings.mpopt.opf.flow_lim = 'I';
 settings.mpopt.pf.flow_lim = 'I';
 settings.mpopt.cpf.flow_lim = 'I';
 
-z_1 = accfm_pdf_batch_comparison(case2736sp, 'zipf', 3.0, 3, settings, 'z_1.mat');
-z_r = accfm_pdf_batch_comparison(modifycase(randomizecase(case2736sp,settings),'',settings), 'zipf', 3.0, 3, settings, 'z_r.mat');
+Nsims = 1000;
 
-z_1 = accfm_pdf_batch_comparison(case2736sp_Qmodified, 'zipf', 2.25, 10, settings, 'z_1.mat');
-z_r = accfm_pdf_batch_comparison(modifycase(randomizecase(case2736sp_Qmodified,settings),'',settings), 'zipf', 2.25, 10, settings, 'z_r.mat');
+z_1 = accfm_pdf_batch_comparison(case2736sp, 'zipf', 2.25, Nsims, settings, 'test3_2736sp.mat');
+z_r = accfm_pdf_batch_comparison(modifycase(randomizecase(case2736sp,settings),'',settings), 'zipf', 2.25, Nsims, settings, 'test3_2736sp_randomized.mat');
+
+z_1 = accfm_pdf_batch_comparison(case2736sp_Qmodified, 'zipf', 2.25, Nsims, settings, 'test3_2736sp_Qmodified.mat');
+z_r = accfm_pdf_batch_comparison(modifycase(randomizecase(case2736sp_Qmodified,settings),'',settings), 'zipf', 2.25, Nsims, settings, 'test3_2736sp_Qmodified_randomized.mat');
 
 %
 %%

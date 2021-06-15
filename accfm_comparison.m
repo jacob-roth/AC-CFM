@@ -13,7 +13,7 @@ function result_cascade = accfm_comparison(network, initial_contingency, setting
     define_constants;
 
     if settings.lineflows_current == 1
-        settings.mpopt.opf.flow_lim = 'I'
+        settings.mpopt.opf.flow_lim = 'I';
     end
     
     % load empty initial contingency if no other specified
