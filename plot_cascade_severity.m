@@ -41,6 +41,6 @@ function plot_cascade_severity(fname,plot_title,severity_type)
   ylabel('Number of cascades');
   title(plot_title);
   grid on;
-  saveas(gcf,strcat('figures/',severity_type,'_',fname,'.png'));
+  saveas(gcf,strcat('figures/',severity_type,'_',erase(fname,'.mat'),'.png'));
   clf
 end

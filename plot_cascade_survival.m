@@ -40,13 +40,22 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
   legend
   if strcmp(survival_type, 'lines')
     xlabel('L (number of line failures)')
-    ylabel('Proportion of cascades with <= L failures')
+    if strcmp(display_type, 'proportion')
+      ylabel('Proportion of cascades with <= L line failures')
+    elseif strcmp(display_type, 'number')
+      ylabel('Number of cascades with <= L line failures')
+    end
+
   elseif strcmp(survival_type, 'load')
     xlabel('L (fraction of total load lost)')
-    ylabel('Proportion of cascades with <= L load lost')
+    if strcmp(display_type, 'proportion')
+      ylabel('Proportion of cascades with <= L load lost')
+    elseif strcmp(display_type, 'number')
+      ylabel('Number of cascades with <= L load lost')
+    end
   end
   title(plot_title);
   grid on;
-  saveas(gcf,strcat('figures/',fileout,'_',survival_type,'_',display_type,'.png'));
+  saveas(gcf,strcat('figures/',survival_type,'_',display_type,'_survival_',fileout,'.png'));
   clf
 end
