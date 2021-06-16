@@ -1,4 +1,4 @@
-function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,display_type,fileout)
+function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,display_type,cdf_type,fileout)
   for i = 1:length(dispatch_types)
     %%% iter i
     dispatch_type = dispatch_types{i};
@@ -23,8 +23,12 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
     yy = y(mask);
     ncascs_with_failure = sum(yy);
     
-    %%% number of cascades with <= L failures
-    number = cumsum(yy);
+    %%% number of cascades with <= or >= L failures
+    if strcmp(cdf_type,'cdf')
+      number = cumsum(yy);
+    elseif strcmp(cdf_type,'ccdf')
+      number = cumsum(yy,'reverse');
+    end
     proportion = number/ncascs_with_failure;
       
     %%% plot
@@ -41,7 +45,11 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
   if strcmp(survival_type, 'lines')
     xlabel('L (number of line failures)')
     if strcmp(display_type, 'proportion')
-      ylabel('Proportion of cascades with <= L line failures')
+      if strcmp(cdf_type,'cdf')
+        ylabel('Proportion of cascades with <= L line failures')
+      elseif strcmp(cdf_type,'ccdf')
+        ylabel('Proportion of cascades with >= L line failures')
+      end
     elseif strcmp(display_type, 'number')
       ylabel('Number of cascades with <= L line failures')
     end
@@ -49,13 +57,17 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
   elseif strcmp(survival_type, 'load')
     xlabel('L (fraction of total load lost)')
     if strcmp(display_type, 'proportion')
-      ylabel('Proportion of cascades with <= L load lost')
+      if strcmp(cdf_type,'cdf')
+        ylabel('Proportion of cascades with <= L load lost')
+      elseif strcmp(cdf_type,'cdf')
+        ylabel('Proportion of cascades with >= L load lost')
+      end
     elseif strcmp(display_type, 'number')
       ylabel('Number of cascades with <= L load lost')
     end
   end
   title(plot_title);
   grid on;
-  saveas(gcf,strcat('figures/',survival_type,'_',display_type,'_survival_',fileout,'.png'));
+  saveas(gcf,strcat('figures/',survival_type,'_',display_type,'_survival_',cdf_type,'_',fileout,'.png'));
   clf
 end
