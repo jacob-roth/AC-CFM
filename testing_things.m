@@ -244,3 +244,17 @@ for i = 1:nl
 end
 s = mat2cell(scenarios,1,nl*(nl-1)/2)
 scenarios = s{1}
+
+
+
+% network0.gen - network.gen
+% network0.bus - network.bus
+% network0.branch - network.branch
+
+% networkpf.gen - network.gen
+% networkpf.bus - network.bus
+% networkpf.branch - network.branch
+
+% networkslack.gen - network.gen
+% networkslack.bus - network.bus
+% networkslack.branch - network.branch
