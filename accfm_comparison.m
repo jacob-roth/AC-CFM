@@ -486,7 +486,8 @@ function network = apply_recursion(network, settings, i, k, Gnode_parent)
                         b = imag(t);
                         current2a = ( (Vm_f^2 + (a^2 + b^2) * Vm_t^2 - 2 * Vm_f * Vm_t * ( a * cos(Va_f - Va_t) + b * sin(Va_f - Va_t) ))*(Yabs2/(a^2 + b^2)^2) );
                         current2b = ( (Vm_t^2 + (a^2 + b^2) * Vm_f^2 - 2 * Vm_f * Vm_t * ( a * cos(Va_t - Va_f) + b * sin(Va_f - Va_t) ))*(Yabs2/(a^2 + b^2)^2) );
-                        current2 = max(current2a,current2b);
+                        % current2 = max(current2a,current2b);
+                        current2 = current2a;
                         flows(l) = current2;
                     end
                     exceeded_lines = find((round(flows, 5) > round((network.branch(:, RATE_A)/100).^2 * settings.ol_scale, 5)) & network.branch(:, BR_STATUS) == 1); % based on: Matthias's email from June 15, 2021
