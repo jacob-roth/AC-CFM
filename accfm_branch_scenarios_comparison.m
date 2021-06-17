@@ -12,6 +12,7 @@ function result = accfm_branch_scenarios_comparison(network, scenarios, settings
 
     % use default settings if not defined
     if ~exist('settings', 'var')
+        warning('no settings; using default')
         settings = get_default_settings();
     end
 
@@ -45,7 +46,7 @@ function result = accfm_branch_scenarios_comparison(network, scenarios, settings
     computational = zeros(number_of_scenarios, 2); 
     vcls = zeros(number_of_scenarios, 6);
 
-    errored = {}
+    errored = zeros(1,number_of_scenarios);
     
     result.network = network;
     result.settings = settings;
@@ -62,8 +63,8 @@ function result = accfm_branch_scenarios_comparison(network, scenarios, settings
     end
     
     % use parallel computing toolbox
-    parfor i = 1:number_of_scenarios
-    % for i = 1:number_of_scenarios
+    % parfor i = 1:number_of_scenarios
+    for i = 1:number_of_scenarios
         %output progress if not running on cluster
         if ~isdeployed
             parfor_progress;
@@ -136,7 +137,7 @@ function result = accfm_branch_scenarios_comparison(network, scenarios, settings
             lost_load_final(i) = -1;
 
             %%% !!add warning!!
-            errored{end+1} = i;
+            errored(:,i) = 1;
             warning(['accfm failed for scenario ', num2str(i)]);
         end
     end
@@ -164,6 +165,7 @@ function result = accfm_branch_scenarios_comparison(network, scenarios, settings
     result.load_at_time = load_at_time;
     result.computational = computational;
     result.vcls = vcls;
+    result.errored = errored;
     
     if settings.keep_networks_after_cascade
         result.networks_after_cascade = networks_after_cascade;

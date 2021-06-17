@@ -18,8 +18,8 @@ function plot_cascade_severity(fname,plot_title,severity_type)
       ypre = r.lost_load_final;
     end
     ymax = max(ypre);
-    xpre = linspace(0,ymax,1001)
-    x = linspace(0,ymax,1000)
+    xpre = linspace(0,ymax,1001);
+    x = linspace(0,ymax,1000);
     y = histcounts(ypre,xpre);
   end
   mask = find(y > 0);
