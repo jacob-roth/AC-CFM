@@ -61,11 +61,11 @@ c_2 = modifycase(mpc_case,f_2,settings);
 c_3 = modifycase(mpc_case,f_3,settings);
 c_4 = modifycase(mpc_case,f_4,settings);
 c_5 = modifycase(mpc_case,f_5,settings);
-r_1 = accfm_branch_scenarios_comparison(c_1,contingencies,settings); save(r_1,co_1);
-r_2 = accfm_branch_scenarios_comparison(c_2,contingencies,settings); save(r_2,co_2);
-r_3 = accfm_branch_scenarios_comparison(c_3,contingencies,settings); save(r_3,co_3);
-r_4 = accfm_branch_scenarios_comparison(c_4,contingencies,settings); save(r_4,co_4);
-r_5 = accfm_branch_scenarios_comparison(c_5,contingencies,settings); save(r_5,co_5);
+r_1 = accfm_branch_scenarios_comparison(c_1,contingencies,settings); save(co_1,'r_1');
+r_2 = accfm_branch_scenarios_comparison(c_2,contingencies,settings); save(co_2,'r_2');
+r_3 = accfm_branch_scenarios_comparison(c_3,contingencies,settings); save(co_3,'r_3');
+r_4 = accfm_branch_scenarios_comparison(c_4,contingencies,settings); save(co_4,'r_4');
+r_5 = accfm_branch_scenarios_comparison(c_5,contingencies,settings); save(co_5,'r_5');
 
 %
 %%
@@ -158,11 +158,11 @@ c_2 = modifycase(mpc_case,f_2,settings);
 c_3 = modifycase(mpc_case,f_3,settings);
 c_4 = modifycase(mpc_case,f_4,settings);
 c_5 = modifycase(mpc_case,f_5,settings);
-r_1 = accfm_branch_scenarios_comparison(c_1,contingencies,settings); save(r_1,co_1);
-r_2 = accfm_branch_scenarios_comparison(c_2,contingencies,settings); save(r_2,co_2);
-r_3 = accfm_branch_scenarios_comparison(c_3,contingencies,settings); save(r_3,co_3);
-r_4 = accfm_branch_scenarios_comparison(c_4,contingencies,settings); save(r_4,co_4);
-r_5 = accfm_branch_scenarios_comparison(c_5,contingencies,settings); save(r_5,co_5);
+r_1 = accfm_branch_scenarios_comparison(c_1,contingencies,settings); save(co_1,'r_1');
+r_2 = accfm_branch_scenarios_comparison(c_2,contingencies,settings); save(co_2,'r_2');
+r_3 = accfm_branch_scenarios_comparison(c_3,contingencies,settings); save(co_3,'r_3');
+r_4 = accfm_branch_scenarios_comparison(c_4,contingencies,settings); save(co_4,'r_4');
+r_5 = accfm_branch_scenarios_comparison(c_5,contingencies,settings); save(co_5,'r_5');
 
 %
 %%
