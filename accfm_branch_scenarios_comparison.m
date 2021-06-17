@@ -73,7 +73,6 @@ function result = accfm_branch_scenarios_comparison(network, scenarios, settings
         try
             % run the model
             result_cascade = accfm_comparison(network, struct('branches', scenarios{i}), settings);
-            % result_cascade = accfm_comparison(network, scenarios{i}, settings);
 
             % get results and store them in the result arrays
             contingency(i) = length(scenarios{i});
