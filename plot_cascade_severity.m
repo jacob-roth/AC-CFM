@@ -2,13 +2,21 @@ function plot_cascade_severity(fname,plot_title,severity_type)
   %%% process
   res = load(fname);
   if strcmp(severity_type, 'lines')
-    ypre = sum(res.result.tripped_lines_in_scenario,2);
+    if length(fieldnames(res)) == 1
+      names = fieldnames(res);
+      r = getfield(res,names{1});
+      ypre = sum(r.tripped_lines_in_scenario,2);
+    end
     ymax = max(ypre);
     xpre = 1:(ymax+1);
     x = 1:ymax;
     y = histcounts(ypre,xpre);
   elseif strcmp(severity_type, 'load')
-    ypre = res.result.lost_load_final;
+    if length(fieldnames(res)) == 1
+      names = fieldnames(res);
+      r = getfield(res,names{1});
+      ypre = r.lost_load_final;
+    end
     ymax = max(ypre);
     xpre = linspace(0,ymax,1001)
     x = linspace(0,ymax,1000)
@@ -41,6 +49,6 @@ function plot_cascade_severity(fname,plot_title,severity_type)
   ylabel('Number of cascades');
   title(plot_title);
   grid on;
-  saveas(gcf,strcat('figures/',severity_type,'_',erase(fname,'.mat'),'.png'));
+  saveas(gcf,strcat('figures/',severity_type,'_',erase(fname,[".mat","output/"]),'.png'));
   clf
 end

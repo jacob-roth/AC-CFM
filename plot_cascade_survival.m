@@ -7,12 +7,20 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
     %%% process
     res = load(fname);
     if strcmp(survival_type, 'lines')
-      ypre = sum(res.result.tripped_lines_in_scenario,2);
+      if length(fieldnames(res)) == 1
+        names = fieldnames(res);
+        r = getfield(res,names{1});
+        ypre = sum(r.tripped_lines_in_scenario,2);
+      end
       ymax = max(ypre);
       xpre = 1:(ymax+1);
       x = 1:ymax;
     elseif strcmp(survival_type, 'load')
-      ypre = res.result.lost_load_final;
+      if length(fieldnames(res)) == 1
+        names = fieldnames(res);
+        r = getfield(res,names{1});
+        ypre = r.lost_load_final;
+      end
       ymax = max(ypre);
       xpre = linspace(0,ymax,1001);
       x = linspace(0,ymax,1000);
@@ -59,7 +67,7 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
     if strcmp(display_type, 'proportion')
       if strcmp(cdf_type,'cdf')
         ylabel('Proportion of cascades with <= L load lost')
-      elseif strcmp(cdf_type,'cdf')
+      elseif strcmp(cdf_type,'ccdf')
         ylabel('Proportion of cascades with >= L load lost')
       end
     elseif strcmp(display_type, 'number')

@@ -40,11 +40,11 @@ f_4 = '1_00__0__0__exitrates__1e_12__1_20';
 f_5 = '1_00__0__0__exitrates__1e_15__1_20';
 
 % result file name
-co_1 = 'cascades_118bus_lowdamp_pgliblimits_acopf.mat';
-co_2 = 'cascades_118bus_lowdamp_pgliblimits_scacopf.mat';
-co_3 = 'cascades_118bus_lowdamp_pgliblimits_fpacopf_09.mat';
-co_4 = 'cascades_118bus_lowdamp_pgliblimits_fpacopf_12.mat';
-co_5 = 'cascades_118bus_lowdamp_pgliblimits_fpacopf_15.mat';
+co_1 = 'output/cascades_118bus_lowdamp_pgliblimits_acopf.mat';
+co_2 = 'output/cascades_118bus_lowdamp_pgliblimits_scacopf.mat';
+co_3 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_09.mat';
+co_4 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_12.mat';
+co_5 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_15.mat';
 
 % contingencies
 raw = table2array(readtable('data/ic_IDs.txt'));
@@ -137,11 +137,11 @@ f_4 = '1_00__0__0__exitrates__1e_12__1_20';
 f_5 = '1_00__0__0__exitrates__1e_15__1_20';
 
 % result file name
-co_1 = 'cascades_118bus_lowdamp_pgliblimits_acopf_allprotection.mat';
-co_2 = 'cascades_118bus_lowdamp_pgliblimits_scacopf_allprotection.mat';
-co_3 = 'cascades_118bus_lowdamp_pgliblimits_fpacopf_09_allprotection.mat';
-co_4 = 'cascades_118bus_lowdamp_pgliblimits_fpacopf_12_allprotection.mat';
-co_5 = 'cascades_118bus_lowdamp_pgliblimits_fpacopf_15_allprotection.mat';
+co_1 = 'output/cascades_118bus_lowdamp_pgliblimits_acopf_allprotection.mat';
+co_2 = 'output/cascades_118bus_lowdamp_pgliblimits_scacopf_allprotection.mat';
+co_3 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_09_allprotection.mat';
+co_4 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_12_allprotection.mat';
+co_5 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_15_allprotection.mat';
 
 % contingencies
 raw = table2array(readtable('data/ic_IDs.txt'));
