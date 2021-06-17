@@ -63,8 +63,8 @@ function result = accfm_branch_scenarios_comparison(network, scenarios, settings
     end
     
     % use parallel computing toolbox
-    % parfor i = 1:number_of_scenarios
-    for i = 1:number_of_scenarios
+    parfor i = 1:number_of_scenarios
+    % for i = 1:number_of_scenarios
         %output progress if not running on cluster
         if ~isdeployed
             parfor_progress;
