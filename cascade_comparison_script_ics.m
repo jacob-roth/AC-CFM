@@ -32,7 +32,7 @@ settings.mpopt.pf.flow_lim = 'I';
 settings.mpopt.cpf.flow_lim = 'I';
 
 % base mpc case
-mpc_case = mpc_lowdamp_pgliblimits
+mpc_case = mpc_lowdamp_pgliblimits;
 f_1 = '1_00__0__0__acopf__1_20';
 f_2 = '1_00__0__0__scacopf__1_20';
 f_3 = '1_00__0__0__exitrates__1e_09__1_20';
@@ -129,7 +129,7 @@ settings.mpopt.pf.flow_lim = 'I';
 settings.mpopt.cpf.flow_lim = 'I';
 
 % base mpc case
-mpc_case = mpc_lowdamp_pgliblimits
+mpc_case = mpc_lowdamp_pgliblimits;
 f_1 = '1_00__0__0__acopf__1_20';
 f_2 = '1_00__0__0__scacopf__1_20';
 f_3 = '1_00__0__0__exitrates__1e_09__1_20';
