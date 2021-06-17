@@ -132,6 +132,9 @@ function result = accfm_branch_scenarios_comparison(network, scenarios, settings
             % iteration limit reached
             
             lost_load_final(i) = -1;
+
+            %%% !!add warning!!
+            warning(['accfm failed for scenario ', num2str(i)])
         end
     end
     
