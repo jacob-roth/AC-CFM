@@ -44,6 +44,8 @@ function result = accfm_branch_scenarios_comparison(network, scenarios, settings
     
     computational = zeros(number_of_scenarios, 2); 
     vcls = zeros(number_of_scenarios, 6);
+
+    errored = {}
     
     result.network = network;
     result.settings = settings;
@@ -134,7 +136,8 @@ function result = accfm_branch_scenarios_comparison(network, scenarios, settings
             lost_load_final(i) = -1;
 
             %%% !!add warning!!
-            warning(['accfm failed for scenario ', num2str(i)])
+            errored{end+1} = i;
+            warning(['accfm failed for scenario ', num2str(i)]);
         end
     end
     
