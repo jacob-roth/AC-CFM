@@ -15,11 +15,20 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
       ymax = max(ypre);
       xpre = 1:(ymax+1);
       x = 1:ymax;
-    elseif strcmp(survival_type, 'load')
+    elseif strcmp(survival_type, 'loadlost')
       if length(fieldnames(res)) == 1
         names = fieldnames(res);
         r = getfield(res,names{1});
         ypre = r.lost_load_final;
+      end
+      ymax = max(ypre);
+      xpre = linspace(0,ymax,1001);
+      x = linspace(0,ymax,1000);
+    elseif strcmp(survival_type, 'loadserved')
+      if length(fieldnames(res)) == 1
+        names = fieldnames(res);
+        r = getfield(res,names{1});
+        ypre = 1.0 - r.lost_load_final;
       end
       ymax = max(ypre);
       xpre = linspace(0,ymax,1001);
@@ -51,7 +60,7 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
   %%% formatting
   legend
   if strcmp(survival_type, 'lines')
-    xlabel('L (number of line failures)')
+    xlabel('L: number of line failures')
     if strcmp(display_type, 'proportion')
       if strcmp(cdf_type,'cdf')
         ylabel('Proportion of cascades with <= L line failures')
@@ -59,11 +68,15 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
         ylabel('Proportion of cascades with >= L line failures')
       end
     elseif strcmp(display_type, 'number')
-      ylabel('Number of cascades with <= L line failures')
+      if strcmp(cdf_type,'cdf')
+        ylabel('Number of cascades with <= L line failures')
+      elseif strcmp(cdf_type,'ccdf')
+        ylabel('Number of cascades with >= L line failures')
+      end
     end
 
-  elseif strcmp(survival_type, 'load')
-    xlabel('L (fraction of total load lost)')
+  elseif strcmp(survival_type, 'loadlost')
+    xlabel('L: fraction of total load lost')
     if strcmp(display_type, 'proportion')
       if strcmp(cdf_type,'cdf')
         ylabel('Proportion of cascades with <= L load lost')
@@ -71,7 +84,27 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
         ylabel('Proportion of cascades with >= L load lost')
       end
     elseif strcmp(display_type, 'number')
-      ylabel('Number of cascades with <= L load lost')
+      if strcmp(cdf_type,'cdf')
+        ylabel('Number of cascades with <= L load lost')
+      elseif strcmp(cdf_type,'ccdf')
+        ylabel('Number of cascades with >= L load lost')
+      end
+    end
+  
+  elseif strcmp(survival_type, 'loadserved')
+    xlabel('L: fraction of total load served')
+    if strcmp(display_type, 'proportion')
+      if strcmp(cdf_type,'cdf')
+        ylabel('Proportion of cascades with <= L load served')
+      elseif strcmp(cdf_type,'ccdf')
+        ylabel('Proportion of cascades with >= L load served')
+      end
+    elseif strcmp(display_type, 'number')
+      if strcmp(cdf_type,'cdf')
+        ylabel('Number of cascades with <= L load served')
+      elseif strcmp(cdf_type,'ccdf')
+        ylabel('Number of cascades with >= L load served')
+      end
     end
   end
   title(plot_title);
