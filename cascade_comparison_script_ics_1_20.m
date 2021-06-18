@@ -177,11 +177,11 @@ r_5 = accfm_branch_scenarios_comparison(c_5,contingencies,settings); save(co_5,'
 %
 %%
 %%% plotting lines
-plot_cascade_severity(co_1,'118bus N-0 ACOPF','lines',ol_scale);
-plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','lines',ol_scale);
-plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','lines',ol_scale);
-plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','lines',ol_scale);
-plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','lines',ol_scale);
+plot_cascade_severity(co_1,'118bus N-0 ACOPF','lines',['1_',ol_scale]);
+plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','lines',['1_',ol_scale]);
+plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','lines',['1_',ol_scale]);
+plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','lines',['1_',ol_scale]);
+plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','lines',['1_',ol_scale]);
 % plot_cascade_severity(co_1,'118bus N-0 ACOPF','load');
 % plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','load');
 % plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','load');
