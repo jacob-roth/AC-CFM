@@ -71,11 +71,11 @@ r_5 = accfm_branch_scenarios_comparison(c_5,contingencies,settings); save(co_5,'
 %
 %%
 %%% plotting lines and loads
-plot_cascade_severity(co_1,'118bus N-0 ACOPF','lines',ol_scale);
-plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','lines',ol_scale);
-plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','lines',ol_scale);
-plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','lines',ol_scale);
-plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','lines',ol_scale);
+plot_cascade_severity(co_1,'118bus N-0 ACOPF','lines',['1_',ol_scale]);
+plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','lines',['1_',ol_scale]);
+plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','lines',['1_',ol_scale]);
+plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','lines',['1_',ol_scale]);
+plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','lines',['1_',ol_scale]);
 % plot_cascade_severity(co_1,'118bus N-0 ACOPF','load');
 % plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','load');
 % plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','load');
@@ -140,11 +140,11 @@ settings.mpopt.cpf.flow_lim = 'I';
 
 % base mpc case
 mpc_case = mpc_lowdamp_pgliblimits;
-f_1 = ['1_00__0__0__acopf__1_',ol_scale];
-f_2 = ['1_00__0__0__scacopf__1_',ol_scale];
-f_3 = ['1_00__0__0__exitrates__1e_09__1_',ol_scale];
-f_4 = ['1_00__0__0__exitrates__1e_12__1_',ol_scale];
-f_5 = ['1_00__0__0__exitrates__1e_15__1_',ol_scale];
+f_1 = ['1_00__0__0__acopf__1_',['1_',ol_scale]];
+f_2 = ['1_00__0__0__scacopf__1_',['1_',ol_scale]];
+f_3 = ['1_00__0__0__exitrates__1e_09__1_',['1_',ol_scale]];
+f_4 = ['1_00__0__0__exitrates__1e_12__1_',['1_',ol_scale]];
+f_5 = ['1_00__0__0__exitrates__1e_15__1_',['1_',ol_scale]];
 
 % result file name
 co_1 = ['output/cascades_118bus_lowdamp_pgliblimits_acopf_allprotection_1_',ol_scale,'.mat'];
@@ -177,11 +177,11 @@ r_5 = accfm_branch_scenarios_comparison(c_5,contingencies,settings); save(co_5,'
 %
 %%
 %%% plotting lines
-plot_cascade_severity(co_1,'118bus N-0 ACOPF','lines',ol_scale);
-plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','lines',ol_scale);
-plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','lines',ol_scale);
-plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','lines',ol_scale);
-plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','lines',ol_scale);
+plot_cascade_severity(co_1,'118bus N-0 ACOPF','lines',['1_',ol_scale]);
+plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','lines',['1_',ol_scale]);
+plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','lines',['1_',ol_scale]);
+plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','lines',['1_',ol_scale]);
+plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','lines',['1_',ol_scale]);
 % plot_cascade_severity(co_1,'118bus N-0 ACOPF','load');
 % plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','load');
 % plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','load');
