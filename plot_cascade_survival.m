@@ -136,6 +136,6 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
   end
   title(plot_title);
   grid on;
-  saveas(gcf,strcat('figures/',ol_scale,'/',survival_type,'_',display_type,'_survival_',cdf_type,'_',fileout,'.png'));
+  saveas(gcf,strcat('figures/',['1_',ol_scale],'/',survival_type,'_',display_type,'_survival_',cdf_type,'_',fileout,'.png'));
   clf
 end
