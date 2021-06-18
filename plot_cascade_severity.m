@@ -1,4 +1,4 @@
-function plot_cascade_severity(fname,plot_title,severity_type)
+function plot_cascade_severity(fname,plot_title,severity_type,ol_scale)
   %%% process
   res = load(fname);
   if strcmp(severity_type, 'lines')
@@ -49,6 +49,6 @@ function plot_cascade_severity(fname,plot_title,severity_type)
   ylabel('Number of cascades');
   title(plot_title);
   grid on;
-  saveas(gcf,strcat('figures/',severity_type,'_',erase(fname,[".mat","output/"]),'.png'));
+  saveas(gcf,strcat('figures/',ol_scale,'/',severity_type,'_',erase(fname,[".mat","output/"]),'.png'));
   clf
 end
