@@ -102,7 +102,7 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
       end
     end
 
-  elseif strcmp(survival_type, 'loadlost')
+  elseif strcmp(survival_type, 'loadlost_all') | strcmp(survival_type, 'loadlost_lines')
     xlabel('L: fraction of total load lost')
     if strcmp(display_type, 'proportion')
       if strcmp(cdf_type,'cdf')
@@ -118,7 +118,7 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
       end
     end
   
-  elseif strcmp(survival_type, 'loadserved')
+  elseif strcmp(survival_type, 'loadserved_all') | strcmp(survival_type, 'loadserved_lines')
     xlabel('L: fraction of total load served')
     if strcmp(display_type, 'proportion')
       if strcmp(cdf_type,'cdf')
