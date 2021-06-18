@@ -15,11 +15,11 @@ settings.verbose = 0;
   
 % protection mechanisms
 settings.ol  = 1;
-settings.vls = 0;
+settings.vls = 1;
 settings.gl  = 0;
 settings.xl  = 0;
 settings.fls = 0;
-settings.intermediate_failures = 5;
+settings.intermediate_failures = 50;
 settings.ol_scale = 1.0;
 
 % power flow modification settings
@@ -40,11 +40,11 @@ f_4 = '1_00__0__0__exitrates__1e_12__1_20';
 f_5 = '1_00__0__0__exitrates__1e_15__1_20';
 
 % result file name
-co_1 = 'output/cascades_118bus_lowdamp_pgliblimits_acopf.mat';
-co_2 = 'output/cascades_118bus_lowdamp_pgliblimits_scacopf.mat';
-co_3 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_09.mat';
-co_4 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_12.mat';
-co_5 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_15.mat';
+co_1 = 'output/cascades_118bus_lowdamp_pgliblimits_acopf_ol_vls_50.mat';
+co_2 = 'output/cascades_118bus_lowdamp_pgliblimits_scacopf_ol_vls_50.mat';
+co_3 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_09_ol_vls_50.mat';
+co_4 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_12_ol_vls_50.mat';
+co_5 = 'output/cascades_118bus_lowdamp_pgliblimits_fpacopf_15_ol_vls_50.mat';
 
 % contingencies
 raw = table2array(readtable('data/ic_IDs.txt'));
@@ -213,3 +213,7 @@ plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_
 
 % result1 = accfm_comparison(c_1,struct('branches',contingencies{6}),settings)
 % result2 = accfm_branch_scenarios_comparison(c_1,{contingencies{6}},settings)
+result1 = accfm_comparison(c_1,struct('branches',contingencies{377}),settings)
+result2 = accfm_branch_scenarios_comparison(c_1,{contingencies{377}},settings)
+result1 = accfm_comparison(c_1,struct('branches',contingencies{688}),settings)
+result2 = accfm_branch_scenarios_comparison(c_1,{contingencies{688}},settings)
