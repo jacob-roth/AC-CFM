@@ -75,31 +75,35 @@ plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','lines');
 plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','lines');
 plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','lines');
 plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','lines');
-plot_cascade_severity(co_1,'118bus N-0 ACOPF','load');
-plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','load');
-plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','load');
-plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','load');
-plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','load');
+% plot_cascade_severity(co_1,'118bus N-0 ACOPF','load');
+% plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','load');
+% plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','load');
+% plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','load');
+% plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','load');
 
 %
 %%
 %%% plotting survival
 dispatch_types = {'N-0 ACOPF', 'N-1 SC-ACOPF', 'N-k FP-ACOPF (1e-09)', 'N-k FP-ACOPF (1e-12)', 'N-k FP-ACOPF (1e-15)'};
 fnames = {co_1, co_2, co_3, co_4, co_5};
-%cdf
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','proportion','cdf',       'mpc_lowdamp_pgliblimits');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','number','cdf',           'mpc_lowdamp_pgliblimits');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','proportion','cdf',    'mpc_lowdamp_pgliblimits');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','number','cdf',        'mpc_lowdamp_pgliblimits');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved','proportion','cdf',  'mpc_lowdamp_pgliblimits');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved','number','cdf',      'mpc_lowdamp_pgliblimits');
+% %cdf
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','proportion','cdf',       'mpc_lowdamp_pgliblimits');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','number','cdf',           'mpc_lowdamp_pgliblimits');
+% % plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','proportion','cdf',    'mpc_lowdamp_pgliblimits');
+% % plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','number','cdf',        'mpc_lowdamp_pgliblimits');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_all','proportion','cdf',  'mpc_lowdamp_pgliblimits');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_all','number','cdf',      'mpc_lowdamp_pgliblimits');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_lines','proportion','cdf',  'mpc_lowdamp_pgliblimits');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_lines','number','cdf',      'mpc_lowdamp_pgliblimits');
 %ccdf
 plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','proportion','ccdf',      'mpc_lowdamp_pgliblimits');
 plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','number','ccdf',          'mpc_lowdamp_pgliblimits');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','proportion','ccdf',   'mpc_lowdamp_pgliblimits');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','number','ccdf',       'mpc_lowdamp_pgliblimits');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved','proportion','ccdf', 'mpc_lowdamp_pgliblimits');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved','number','ccdf',     'mpc_lowdamp_pgliblimits');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','proportion','ccdf',   'mpc_lowdamp_pgliblimits');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','number','ccdf',       'mpc_lowdamp_pgliblimits');
+plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_all','proportion','ccdf', 'mpc_lowdamp_pgliblimits');
+plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_all','number','ccdf',     'mpc_lowdamp_pgliblimits');
+plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_lines','proportion','ccdf', 'mpc_lowdamp_pgliblimits');
+plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_lines','number','ccdf',     'mpc_lowdamp_pgliblimits');
 
 %
 %%
@@ -176,28 +180,36 @@ plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','lines');
 plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','lines');
 plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','lines');
 plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','lines');
-plot_cascade_severity(co_1,'118bus N-0 ACOPF','load');
-plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','load');
-plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','load');
-plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','load');
-plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','load');
+% plot_cascade_severity(co_1,'118bus N-0 ACOPF','load');
+% plot_cascade_severity(co_2,'118bus N-1 SC-ACOPF','load');
+% plot_cascade_severity(co_3,'118bus N-k FP-ACOPF 1e-09','load');
+% plot_cascade_severity(co_4,'118bus N-k FP-ACOPF 1e-12','load');
+% plot_cascade_severity(co_5,'118bus N-k FP-ACOPF 1e-15','load');
 
 %
 %%
 %%% plotting survival
 dispatch_types = {'N-0 ACOPF', 'N-1 SC-ACOPF', 'N-k FP-ACOPF (1e-09)', 'N-k FP-ACOPF (1e-12)', 'N-k FP-ACOPF (1e-15)'};
 fnames = {co_1, co_2, co_3, co_4, co_5};
-%cdf
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','proportion','cdf',      'mpc_lowdamp_pgliblimits_allprotection');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','number','cdf',          'mpc_lowdamp_pgliblimits_allprotection');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','proportion','cdf',   'mpc_lowdamp_pgliblimits_allprotection');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','number','cdf',       'mpc_lowdamp_pgliblimits_allprotection');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved','proportion','cdf', 'mpc_lowdamp_pgliblimits_allprotection');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved','number','cdf',     'mpc_lowdamp_pgliblimits_allprotection');
+% %cdf
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','proportion','cdf',      'mpc_lowdamp_pgliblimits_allprotection');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','number','cdf',          'mpc_lowdamp_pgliblimits_allprotection');
+% % plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','proportion','cdf',   'mpc_lowdamp_pgliblimits_allprotection');
+% % plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','number','cdf',       'mpc_lowdamp_pgliblimits_allprotection');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_all','proportion','cdf', 'mpc_lowdamp_pgliblimits_allprotection');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_all','number','cdf',     'mpc_lowdamp_pgliblimits_allprotection');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_lines','proportion','cdf', 'mpc_lowdamp_pgliblimits_allprotection');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_lines','number','cdf',     'mpc_lowdamp_pgliblimits_allprotection');
 %ccdf
 plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','proportion','ccdf',     'mpc_lowdamp_pgliblimits_allprotection');
 plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','lines','number','ccdf',         'mpc_lowdamp_pgliblimits_allprotection');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','proportion','ccdf',  'mpc_lowdamp_pgliblimits_allprotection');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','number','ccdf',      'mpc_lowdamp_pgliblimits_allprotection');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved','proportion','ccdf','mpc_lowdamp_pgliblimits_allprotection');
-plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved','number','ccdf',    'mpc_lowdamp_pgliblimits_allprotection');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','proportion','ccdf',  'mpc_lowdamp_pgliblimits_allprotection');
+% plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadlost','number','ccdf',      'mpc_lowdamp_pgliblimits_allprotection');
+plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_all','proportion','ccdf','mpc_lowdamp_pgliblimits_allprotection');
+plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_all','number','ccdf',    'mpc_lowdamp_pgliblimits_allprotection');
+plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_lines','proportion','ccdf','mpc_lowdamp_pgliblimits_allprotection');
+plot_cascade_survival(fnames,dispatch_types,'118bus Survival Plots','loadserved_lines','number','ccdf',    'mpc_lowdamp_pgliblimits_allprotection');
+
+
+% result1 = accfm_comparison(c_1,struct('branches',contingencies{6}),settings)
+% result2 = accfm_branch_scenarios_comparison(c_1,{contingencies{6}},settings)

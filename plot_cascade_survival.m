@@ -1,4 +1,5 @@
 function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,display_type,cdf_type,fileout)
+  linestyles = {'-','--',':',':',':'};
   for i = 1:length(dispatch_types)
     %%% iter i
     dispatch_type = dispatch_types{i};
@@ -15,7 +16,7 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
       ymax = max(ypre);
       xpre = 1:(ymax+1);
       x = 1:ymax;
-    elseif strcmp(survival_type, 'loadlost')
+    elseif strcmp(survival_type, 'loadlost_all')
       if length(fieldnames(res)) == 1
         names = fieldnames(res);
         r = getfield(res,names{1});
@@ -24,11 +25,29 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
       ymax = max(ypre);
       xpre = linspace(0,ymax,1001);
       x = linspace(0,ymax,1000);
-    elseif strcmp(survival_type, 'loadserved')
+    elseif strcmp(survival_type, 'loadlost_lines')
+      if length(fieldnames(res)) == 1
+        names = fieldnames(res);
+        r = getfield(res,names{1});
+        ypre = r.ls_tripped(:,end);
+      end
+      ymax = max(ypre);
+      xpre = linspace(0,ymax,1001);
+      x = linspace(0,ymax,1000);
+    elseif strcmp(survival_type, 'loadserved_all')
       if length(fieldnames(res)) == 1
         names = fieldnames(res);
         r = getfield(res,names{1});
         ypre = 1.0 - r.lost_load_final;
+      end
+      ymax = max(ypre);
+      xpre = linspace(0,ymax,1001);
+      x = linspace(0,ymax,1000);
+    elseif strcmp(survival_type, 'loadserved_lines')
+      if length(fieldnames(res)) == 1
+        names = fieldnames(res);
+        r = getfield(res,names{1});
+        ypre = 1.0 - r.ls_tripped(:,end);
       end
       ymax = max(ypre);
       xpre = linspace(0,ymax,1001);
@@ -50,15 +69,23 @@ function plot_cascade_survival(fnames,dispatch_types,plot_title,survival_type,di
       
     %%% plot
     if strcmp(display_type,'proportion')
-      plot(xx,proportion,'DisplayName',dispatch_type)
+      plot(xx,proportion,'-o',...
+                     'MarkerSize',2,...
+                     'DisplayName',dispatch_type,...
+                     'LineWidth',2,...
+                     'LineStyle',linestyles{i})
     elseif strcmp(display_type,'number')
-      plot(xx,number,'DisplayName',dispatch_type)
+      plot(xx,number,'-o',...
+                     'MarkerSize',2,...
+                     'DisplayName',dispatch_type,...
+                     'LineWidth',2,...
+                     'LineStyle',linestyles{i})
     end
     hold on
   end
 
   %%% formatting
-  legend
+  legend('Location', 'southoutside')
   if strcmp(survival_type, 'lines')
     xlabel('L: number of line failures')
     if strcmp(display_type, 'proportion')
