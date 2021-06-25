@@ -22,9 +22,8 @@ methodlabs <- c("acopf","scacopf","exitrates_1e09","exitrates_1e12","exitrates_1
 protections <- c("allprotection","ol_vls_50")
 limitscales <- c("1_05","1_10","1_15","1_20")
 plottypes <- c("lines","loadserved_all","loadlost_all")
-frac_or_pu <- "pu"
-number_or_proportion <- "proportion"
-paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion){
+
+paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion,alternate_formatting){
   fnames <- c()
   fids <- c()
   for (protection in protections) {
@@ -38,12 +37,20 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
       dataxproportion <- vector("list", length(methodlabs))
       if (plottype == "lines"){
         plotname <- paste(limitscale,"/",plottype,"_",number_or_proportion,"_",protection,"_",sep='')
-        (fnameout <- paste("figures/",plotname,casebase,".pdf",sep=''))
+        if (alternate_formatting == TRUE){
+          (fnameout <- paste("figures/",plotname,casebase,"_alt.pdf",sep=''))
+        } else {
+          (fnameout <- paste("figures/",plotname,casebase,".pdf",sep=''))
+        }
         show(fnameout)
       }
       else {
         plotname <- paste(limitscale,"/",plottype,"_",frac_or_pu,"_",number_or_proportion,"_",protection,"_",sep='')
-        (fnameout <- paste("figures/",plotname,casebase,".pdf",sep=''))
+        if (alternate_formatting == TRUE) {
+          (fnameout <- paste("figures/",plotname,casebase,"_alt.pdf",sep=''))
+        } else {
+          (fnameout <- paste("figures/",plotname,casebase,".pdf",sep=''))
+        }
         show(fnameout)
       }
       for (k in 1:length(methods)) {
@@ -68,7 +75,7 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
           }
           else {
             xlabel <- "L: Number of failed lines"
-            ylabel <- "Number of cascades with failed lines >= L)"
+            ylabel <- "Number of cascades with failed lines >= L"
           }
         } else if (plottype=="loadlost_all") {
           totalloadpu <- sum(df[[NETWORK]][[BUS]][,PD])/df[[NETWORK]][[BASEMVA]][1,1]
@@ -87,7 +94,7 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
               ylabel <- "Pr(Load lost (p.u.) >= x)"
             } else {
               xlabel <- "x: Load lost (p.u.)"
-              ylabel <- "Number of cascades with load lost (p.u.) >= x)"
+              ylabel <- "Number of cascades with load lost (p.u.) >= x"
             }
             
           } else if (frac_or_pu == "frac") {
@@ -102,7 +109,7 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
               ylabel <- "Pr(Load lost (fraction) >= x)"
             } else {
               xlabel <- "x: Load lost (fraction)"
-              ylabel <- "Number of cascades with load lost (fraction) >= x)"
+              ylabel <- "Number of cascades with load lost (fraction) >= x"
             }
           }
         } else if (plottype=="loadserved_all") {
@@ -123,7 +130,7 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
               ylabel <- "Pr(Load served (p.u.) >= x)"
             } else {
               xlabel <- "x: Load served (p.u.)"
-              ylabel <- "Number of cascades with load served (p.u.) >= x)"
+              ylabel <- "Number of cascades with load served (p.u.) >= x"
             }
           } else if (frac_or_pu == "frac") {
             ypre <- yprepre$loadservedfrac
@@ -138,7 +145,7 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
               ylabel <- "Pr(Load served (fraction) >= x)"
             } else {
               xlabel <- "x: Load served (fraction)"
-              ylabel <- "Number of cascades with load served (fraction) >= x)"
+              ylabel <- "Number of cascades with load served (fraction) >= x"
             }
           }
         }
@@ -173,90 +180,73 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
       } else if (number_or_proportion == "proportion") {
         data <- dataproportion
       }
-      pdf(fnameout)
-      if (plottype == "lines") {
-        sp <- ggplot(data=data) + 
-              geom_line(aes(x=acopf_x, y=acopf_y, color = "N-0")) +
-              geom_line(aes(x=scacopf_x, y=scacopf_y, color = "N-1")) +
-              geom_line(aes(x=exitrates_1e09_x, y=exitrates_1e09_y, color = "lambda = 1e-09")) +
-              geom_line(aes(x=exitrates_1e12_x, y=exitrates_1e12_y, color = "lambda = 1e-12")) +
-              geom_line(aes(x=exitrates_1e15_x, y=exitrates_1e15_y, color = "lambda = 1e-15")) +
-              scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
-                  labels = trans_format("log10", math_format(10^.x))) +
-              scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
-                  labels = trans_format("log10", math_format(10^.x))) +
-              xlab(xlabel) +
-              ylab(ylabel) +
-              theme(plot.title = element_text(size = 11, face = "bold")) +
-              scale_color_manual(values = c("N-0" = "red",
-                                            "N-1" = "brown4",
-                                            "lambda = 1e-09" = "blue",
-                                            "lambda = 1e-12" = "forestgreen",
-                                            "lambda = 1e-15" = "magenta"),
-                                limits = c("N-0", "N-1",
-                                            "lambda = 1e-09", 
-                                            "lambda = 1e-12", 
-                                            "lambda = 1e-15"),
-                                labels = c("N-0", "N-1",
-                                            unname(TeX(c(
-                                              "$\\lambda^{\\mathrm{lim}}=10^{-9}$",
-                                              "$\\lambda^{\\mathrm{lim}}=10^{-12}$",
-                                              "$\\lambda^{\\mathrm{lim}}=10^{-15}$"
-                                            ))))
-                                            # TeX("$\lambda^{\mathrm{lim}}~=~10^{-9}$"), 
-                                            # TeX("$\lambda^{\mathrm{lim}}~=~10^{-12}$"), 
-                                            # TeX("$\lambda^{\mathrm{lim}}~=~10^{-15}$"))
-                                            # expression("lambda"^"lim"~"="~10^"-9"), 
-                                            # expression("lambda"^"lim"~"="~10^"-12"), 
-                                            # expression("lambda"^"lim"~"="~10^"-15"))
-                                            # expression("\U03BB"^"lim"~"="~10^"-9"), 
-                                            # expression("\U03BB"^"lim"~"="~10^"-12"), 
-                                            # expression("\U03BB"^"lim"~"="~10^"-15"))
-              ) + labs(color = "") # + theme_bw() + annotation_logticks()
-              print(sp)
-              dev.off()
-      } else if (plottype=="loadlost_all" | plottype=="loadserved_all") {
-        sp <- ggplot(data=data) + 
-              geom_line(aes(x=acopf_x, y=acopf_y, color = "N-0")) +
-              geom_line(aes(x=scacopf_x, y=scacopf_y, color = "N-1")) +
-              geom_line(aes(x=exitrates_1e09_x, y=exitrates_1e09_y, color = "lambda = 1e-09")) +
-              geom_line(aes(x=exitrates_1e12_x, y=exitrates_1e12_y, color = "lambda = 1e-12")) +
-              geom_line(aes(x=exitrates_1e15_x, y=exitrates_1e15_y, color = "lambda = 1e-15")) +
-              xlab(xlabel) +
-              ylab(ylabel) +
-              theme(plot.title = element_text(size = 11, face = "bold")) +
-              scale_color_manual(values = c("N-0" = "red",
-                                            "N-1" = "brown4",
-                                            "lambda = 1e-09" = "blue",
-                                            "lambda = 1e-12" = "forestgreen",
-                                            "lambda = 1e-15" = "magenta"),
-                                limits = c("N-0", "N-1",
-                                            "lambda = 1e-09", 
-                                            "lambda = 1e-12", 
-                                            "lambda = 1e-15"),
-                                labels = c("N-0", "N-1",
-                                            unname(TeX(c(
-                                              "$\\lambda^{\\mathrm{lim}}=10^{-9}$",
-                                              "$\\lambda^{\\mathrm{lim}}=10^{-12}$",
-                                              "$\\lambda^{\\mathrm{lim}}=10^{-15}$"
-                                            ))))
-                                            # TeX("$\lambda^{\mathrm{lim}}~=~10^{-9}$"), 
-                                            # TeX("$\lambda^{\mathrm{lim}}~=~10^{-12}$"), 
-                                            # TeX("$\lambda^{\mathrm{lim}}~=~10^{-15}$"))
-                                            # expression("lambda"^"lim"~"="~10^"-9"), 
-                                            # expression("lambda"^"lim"~"="~10^"-12"), 
-                                            # expression("lambda"^"lim"~"="~10^"-15"))
-                                            # expression("\U03BB"^"lim"~"="~10^"-9"), 
-                                            # expression("\U03BB"^"lim"~"="~10^"-12"), 
-                                            # expression("\U03BB"^"lim"~"="~10^"-15"))
-              ) + labs(color = "") # + theme_bw() + annotation_logticks()
-              print(sp)
-              dev.off()
+      if (alternate_formatting == TRUE){
+        pdf(fnameout)
+      } else {
+        pdf(fnameout)
       }
+        
+        
+      sp <- ggplot(data=data) + 
+            geom_line(aes(x=acopf_x, y=acopf_y, color = "N-0")) +
+            geom_line(aes(x=scacopf_x, y=scacopf_y, color = "N-1")) +
+            geom_line(aes(x=exitrates_1e09_x, y=exitrates_1e09_y, color = "lambda = 1e-09")) +
+            geom_line(aes(x=exitrates_1e12_x, y=exitrates_1e12_y, color = "lambda = 1e-12")) +
+            geom_line(aes(x=exitrates_1e15_x, y=exitrates_1e15_y, color = "lambda = 1e-15")) +
+            xlab(xlabel) +
+            ylab(ylabel) +
+            theme(plot.title = element_text(size = 11, face = "bold")) +
+            scale_color_manual(values = c("N-0" = "red",
+                                          "N-1" = "brown4",
+                                          "lambda = 1e-09" = "blue",
+                                          "lambda = 1e-12" = "forestgreen",
+                                          "lambda = 1e-15" = "magenta"),
+                              limits = c("N-0", "N-1",
+                                          "lambda = 1e-09", 
+                                          "lambda = 1e-12", 
+                                          "lambda = 1e-15"),
+                              labels = c("N-0", "N-1",
+                                          unname(TeX(c(
+                                            "$\\lambda^{\\mathrm{lim}}=10^{-9}$",
+                                            "$\\lambda^{\\mathrm{lim}}=10^{-12}$",
+                                            "$\\lambda^{\\mathrm{lim}}=10^{-15}$"
+                                          ))))
+            ) + labs(color = "")
+            if (plottype == "lines") {
+              sp <- sp + scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                    labels = trans_format("log10", math_format(10^.x))) +
+                    scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                    labels = trans_format("log10", math_format(10^.x)))
+              if (alternate_formatting == TRUE) {
+               sp <- sp + theme_bw() + annotation_logticks()
+              }
+            } else {
+              if (alternate_formatting == TRUE) {
+               sp <- sp + theme_bw()
+              }
+            }
+            print(sp)
+            dev.off()
     }
   }
 }
+
+##
+## proportion
+##
+frac_or_pu <- "pu"
+number_or_proportion <- "proportion"
+alternate_formatting <- TRUE
 for (plottype in plottypes){
-  paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion)
+  paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion, alternate_formatting)
 }
 
+##
+## number
+##
+frac_or_pu <- "pu"
+number_or_proportion <- "number"
+alternate_formatting <- TRUE
+for (plottype in plottypes){
+  paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion, alternate_formatting)
+}
