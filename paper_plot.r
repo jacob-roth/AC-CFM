@@ -1,4 +1,17 @@
 # ==================================================
+log10_minor_break = function (...){
+  function(x) {
+    minx         = floor(min(log10(x), na.rm=T))-1;
+    maxx         = ceiling(max(log10(x), na.rm=T))+1;
+    n_major      = maxx-minx+1;
+    major_breaks = seq(minx, maxx, by=1)
+    minor_breaks = 
+      rep(log10(seq(1, 9, by=1)), times = n_major)+
+      rep(major_breaks, each = 9)
+    return(10^(minor_breaks))
+  }
+}
+# ==================================================
 # install.packages("R.matlab");
 # install.packages("R.oo");
 # install.packages("comprehenr");
@@ -24,6 +37,8 @@ BUS <- 3
 PD <- 3
 BASEMVA <- 2
 RES <- 1e-4
+# load shed <- load lost
+# loglog for all
 # ==================================================
 
 casebase <- "118bus_lowdamp_pgliblimits"
@@ -101,11 +116,11 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             xx <- x[mask];
             yy <- y[mask];
             if (number_or_proportion == "proportion"){
-              xlabel <- "x: Load lost (p.u.)"
-              ylabel <- "Pr(Load lost (p.u.) >= x)"
+              xlabel <- "x: Load shed (p.u.)"
+              ylabel <- "Pr(Load shed >= x)"
             } else {
-              xlabel <- "x: Load lost (p.u.)"
-              ylabel <- "Number of cascades with load lost (p.u.) >= x"
+              xlabel <- "x: Load shed (p.u.)"
+              ylabel <- "Number of cascades with load shed >= x"
             }
             
           } else if (frac_or_pu == "frac") {
@@ -116,11 +131,11 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             xx <- x[mask];
             yy <- y[mask];
             if (number_or_proportion == "proportion"){
-              xlabel <- "x: Load lost (fraction)"
-              ylabel <- "Pr(Load lost (fraction) >= x)"
+              xlabel <- "x: Load shed (fraction)"
+              ylabel <- "Pr(Load shed >= x)"
             } else {
               xlabel <- "x: Load lost (fraction)"
-              ylabel <- "Number of cascades with load lost (fraction) >= x"
+              ylabel <- "Number of cascades with load shed >= x"
             }
           }
         } else if (plottype=="loadserved_all") {
@@ -138,10 +153,10 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             yy <- y[mask];
             if (number_or_proportion == "proportion"){
               xlabel <- "x: Load served (p.u.)"
-              ylabel <- "Pr(Load served (p.u.) >= x)"
+              ylabel <- "Pr(Load served >= x)"
             } else {
               xlabel <- "x: Load served (p.u.)"
-              ylabel <- "Number of cascades with load served (p.u.) >= x"
+              ylabel <- "Number of cascades with load served >= x"
             }
           } else if (frac_or_pu == "frac") {
             ypre <- yprepre$loadservedfrac
@@ -153,10 +168,10 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             yy <- y[mask];
             if (number_or_proportion == "proportion"){
               xlabel <- "x: Load served (fraction)"
-              ylabel <- "Pr(Load served (fraction) >= x)"
+              ylabel <- "Pr(Load served >= x)"
             } else {
               xlabel <- "x: Load served (fraction)"
-              ylabel <- "Number of cascades with load served (fraction) >= x"
+              ylabel <- "Number of cascades with load served >= x"
             }
           }
         }
@@ -196,8 +211,6 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
       } else {
         pdf(fnameout)
       }
-        
-        
       sp <- ggplot(data=data) + 
             geom_line(aes(x=acopf_x, y=acopf_y, color = "N-0")) +
             geom_line(aes(x=scacopf_x, y=scacopf_y, color = "N-1")) +
@@ -216,29 +229,29 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
                                           "lambda = 1e-09", 
                                           "lambda = 1e-12", 
                                           "lambda = 1e-15"),
+                              # labels = c("N-0", "N-1",              #labels = c("N-0", "N-1",
+                              #   expression("λ"^"lim"~"="~10^"-9"),  #expression("\U03BB"^"lim"~"="~10^"-9"), 
+                              #   expression("λ"^"lim"~"="~10^"-12"), #expression("\U03BB"^"lim"~"="~10^"-12"), 
+                              #   expression("λ"^"lim"~"="~10^"-15")) #expression("\U03BB"^"lim"~"="~10^"-15"))
                               labels = c("N-0", "N-1",
                                           unname(TeX(c(
-                                            "$\\lambda^{\\mathrm{lim}}=10^{-9}$",
-                                            "$\\lambda^{\\mathrm{lim}}=10^{-12}$",
-                                            "$\\lambda^{\\mathrm{lim}}=10^{-15}$"
+                                            "$\\lambda^{\\mathrm{lim}}\\,=\\,10^{-9}$",
+                                            "$\\lambda^{\\mathrm{lim}}\\,=\\,10^{-12}$",
+                                            "$\\lambda^{\\mathrm{lim}}\\,=\\,10^{-15}$"
                                           ))))
             ) + labs(color = "")
-            if (plottype == "lines") {
+            if (TRUE) {
               # http://www.sthda.com/english/wiki/ggplot2-axis-scales-and-transformations
-              sp <- sp + scale_x_continuous(trans='log2', breaks=trans_breaks("log2", function(x) 2^x, n=5), labels=label_number(drop0trailing = TRUE)) +
-                         scale_y_continuous(trans='log10', breaks=trans_breaks("log10", function(x) 10^x), labels = trans_format("log10", math_format(10^.x)))
-              # sp <- sp + scale_x_continuous(trans='log10', breaks=trans_breaks("log10", function(x) 10^x), labels=label_number(drop0trailing = TRUE)) +
-              #            scale_y_continuous(trans='log10', breaks=trans_breaks("log10", function(x) 10^x), labels = trans_format("log10", math_format(10^.x)))
-              # sp <- sp + coord_trans(x="log10",y="log10")
-                    # scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
-                    # labels = label_number(drop0trailing = TRUE)) +
-                    # # labels = trans_format(expr=.x), format=force) +
-                    # # labels = trans_format("log10", math_format(.x))) +
-                    # # labels = trans_format("log10", math_format(10^.x))) +
-                    # scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
-                    # labels = trans_format("log10", math_format(10^.x)))
+              ### albert
+              sp <- sp + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x, n=2),
+                                      labels = trans_format("log10", math_format(10^.x)),
+                                      minor_breaks=log10_minor_break())
+              sp <- sp + scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x, n=2),
+                                      labels = trans_format("log10", math_format(10^.x)),
+                                      minor_breaks=log10_minor_break())
               if (alternate_formatting == TRUE) {
-               sp <- sp + theme_bw()# + annotation_logticks()
+              #  sp <- sp + theme_bw()# + annotation_logticks()
+               sp <- sp + theme_bw() + annotation_logticks(base = 10, sides = "lb")
               }
             } else {
               if (alternate_formatting == TRUE) {
