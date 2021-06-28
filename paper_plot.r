@@ -1,11 +1,21 @@
 # ==================================================
+# install.packages("R.matlab");
+# install.packages("R.oo");
+# install.packages("comprehenr");
+# install.packages("ggplot2");
+# install.packages("reshape2");
+# install.packages("latex2exp");
+# install.packages("scales");
+# install.packages("patchwork");
 setwd("~/git/AC-CFM")
-install.packages("R.matlab");library(R.matlab)
-install.packages("R.oo");library(R.oo)
-install.packages("comprehenr"); library(comprehenr)
-install.packages("ggplot2"); library(ggplot2)
-install.packages("reshape2"); library(reshape2)
-install.packages("latex2exp"); library(latex2exp)
+library(R.matlab)
+library(R.oo)
+library(comprehenr)
+library(ggplot2)
+library(reshape2)
+library(latex2exp)
+library(scales)
+library(patchwork)
 LINES <- 5
 LOADLOST_ALL <- 20
 LOADLOST_LINES <- 19
@@ -31,6 +41,7 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
       ##
       ## get data
       ##
+      maxlength <- 0
       dataynumber <- vector("list", length(methodlabs))
       datayproportion <- vector("list", length(methodlabs))
       dataxnumber <- vector("list", length(methodlabs))
@@ -213,12 +224,21 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
                                           ))))
             ) + labs(color = "")
             if (plottype == "lines") {
-              sp <- sp + scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
-                    labels = trans_format("log10", math_format(10^.x))) +
-                    scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
-                    labels = trans_format("log10", math_format(10^.x)))
+              # http://www.sthda.com/english/wiki/ggplot2-axis-scales-and-transformations
+              sp <- sp + scale_x_continuous(trans='log2', breaks=trans_breaks("log2", function(x) 2^x, n=5), labels=label_number(drop0trailing = TRUE)) +
+                         scale_y_continuous(trans='log10', breaks=trans_breaks("log10", function(x) 10^x), labels = trans_format("log10", math_format(10^.x)))
+              # sp <- sp + scale_x_continuous(trans='log10', breaks=trans_breaks("log10", function(x) 10^x), labels=label_number(drop0trailing = TRUE)) +
+              #            scale_y_continuous(trans='log10', breaks=trans_breaks("log10", function(x) 10^x), labels = trans_format("log10", math_format(10^.x)))
+              # sp <- sp + coord_trans(x="log10",y="log10")
+                    # scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                    # labels = label_number(drop0trailing = TRUE)) +
+                    # # labels = trans_format(expr=.x), format=force) +
+                    # # labels = trans_format("log10", math_format(.x))) +
+                    # # labels = trans_format("log10", math_format(10^.x))) +
+                    # scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                    # labels = trans_format("log10", math_format(10^.x)))
               if (alternate_formatting == TRUE) {
-               sp <- sp + theme_bw() + annotation_logticks()
+               sp <- sp + theme_bw()# + annotation_logticks()
               }
             } else {
               if (alternate_formatting == TRUE) {
