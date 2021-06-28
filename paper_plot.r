@@ -46,7 +46,7 @@ methods <- c("acopf","scacopf","fpacopf_09","fpacopf_12","fpacopf_15")
 methodlabs <- c("acopf","scacopf","exitrates_1e09","exitrates_1e12","exitrates_1e15")
 protections <- c("allprotection","ol_vls_50")
 limitscales <- c("1_05","1_10","1_15","1_20")
-plottypes <- c("lines","loadserved_all","loadlost_all")
+plottypes <- c("lines","loadlost_all")#,"loadserved_all")
 
 paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion,alternate_formatting){
   fnames <- c()
