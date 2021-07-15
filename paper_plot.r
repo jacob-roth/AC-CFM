@@ -48,9 +48,10 @@ protections <- c("allprotection","ol_vls_50")
 limitscales <- c("1_05","1_10","1_15","1_20")
 plottypes <- c("lines","loadlost_all")#,"loadserved_all")
 
-paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion,alternate_formatting){
+paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion,alternate_formatting,cond_or_uncond){
   fnames <- c()
   fids <- c()
+  dataout <- list()
   for (protection in protections) {
     for (limitscale in limitscales) {
       ##
@@ -90,9 +91,17 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
         if (plottype=="lines") {
           yprepre <- data.frame("rawcounts"=rowSums(df[[LINES]]))
           ypre <- yprepre$rawcounts
-          x <- 1:max(ypre)
+          if (cond_or_uncond == "cond") {
+            x <- 1:max(ypre)
+          } else {
+            x <- 0:max(ypre)
+          }
           y <- to_vec(for (v in x) sum((ypre >= v)))
-          mask <- (y > 0);
+          if (cond_or_uncond == "cond") {
+            mask <- (y > 0);
+          } else {
+            mask <- rep(TRUE,length(y));
+          }
           xx <- x[mask];
           yy <- y[mask];
           if (number_or_proportion == "proportion"){
@@ -112,7 +121,11 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             ypre <- yprepre$loadlostpu
             x <- seq(from=0,to=1,by=RES)*totalloadpu
             y <- to_vec(for (v in x) sum((ypre >= v)))
-            mask <- (y > 0) & (x > 0)
+            if (cond_or_uncond == "cond") {
+              mask <- (y > 0) & (x > 0)
+            } else {
+              mask <- rep(TRUE,length(y));
+            }
             xx <- x[mask];
             yy <- y[mask];
             if (number_or_proportion == "proportion"){
@@ -127,7 +140,11 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             ypre <- yprepre$loadlostfrac
             x <- seq(from=0,to=1,by=RES)
             y <- to_vec(for (v in x) sum((ypre >= v)))
-            mask <- (y > 0) & (x > 0)
+            if (cond_or_uncond == "cond") {
+              mask <- (y > 0) & (x > 0)
+            } else {
+              mask <- rep(TRUE,length(y));
+            }
             xx <- x[mask];
             yy <- y[mask];
             if (number_or_proportion == "proportion"){
@@ -145,10 +162,16 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
           yprepre <- data.frame("loadservedpu"=pu,"loadservedfrac"=frac)
           if (frac_or_pu == "pu") {
             ypre <- yprepre$loadservedpu
-            ypre <- ypre[(ypre < totalloadpu)] # remove non-failure scenarios
+            if (cond_or_uncond == "cond") {
+              ypre <- ypre[(ypre < totalloadpu)] # remove non-failure scenarios
+            }
             x <- seq(from=0,to=1,by=RES)*totalloadpu
             y <- to_vec(for (v in x) sum((ypre >= v)))
-            mask <- (y > 0) & (x < totalloadpu)
+            if (cond_or_uncond == "cond") {
+              mask <- (y > 0) & (x < totalloadpu)
+            } else {
+              mask <- rep(TRUE,length(y));
+            }
             xx <- x[mask];
             yy <- y[mask];
             if (number_or_proportion == "proportion"){
@@ -160,10 +183,16 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             }
           } else if (frac_or_pu == "frac") {
             ypre <- yprepre$loadservedfrac
-            ypre <- ypre[(ypre < 1)] # remove non-failure scenarios
+            if (cond_or_uncond == "cond") {
+              ypre <- ypre[(ypre < 1)] # remove non-failure scenarios
+            }
             x <- seq(from=0,to=1,by=RES)
             y <- to_vec(for (v in x) sum((ypre >= v)))
-            mask <- (y > 0) & (x < 1)
+            if (cond_or_uncond == "cond") {
+              mask <- (y > 0) & (x < 1)
+            } else {
+              mask <- rep(TRUE,length(y));
+            }
             xx <- x[mask];
             yy <- y[mask];
             if (number_or_proportion == "proportion"){
@@ -175,13 +204,24 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             }
           }
         }
-        ncascs_with_failure <- max(yy);
-        yyproportion <- yy/ncascs_with_failure
-        dataynumber[[k]] <- yy
-        datayproportion[[k]] <- yyproportion
-        dataxnumber[[k]] <- xx
-        dataxproportion[[k]] <- xx
-        maxlength <- max(maxlength,max(length(yy)))
+        if (cond_or_uncond == "uncond") {
+          ## manually remove first "0" data point since ggplot will mess up the transformation
+          ncascs_with_failure <- max(yy);
+          yyproportion <- yy[2:length(yy)]/ncascs_with_failure
+          dataynumber[[k]] <- yy[2:length(yy)]
+          datayproportion[[k]] <- yyproportion
+          dataxnumber[[k]] <- xx[2:length(xx)]
+          dataxproportion[[k]] <- xx[2:length(xx)]
+          maxlength <- max(maxlength,max(length(yy)))
+        } else {
+          ncascs_with_failure <- max(yy);
+          yyproportion <- yy/ncascs_with_failure
+          dataynumber[[k]] <- yy
+          datayproportion[[k]] <- yyproportion
+          dataxnumber[[k]] <- xx
+          dataxproportion[[k]] <- xx
+          maxlength <- max(maxlength,max(length(yy)))
+        }
       }
     
       for (k in 1:length(methodlabs)) {
@@ -206,11 +246,12 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
       } else if (number_or_proportion == "proportion") {
         data <- dataproportion
       }
-      if (alternate_formatting == TRUE){
-        pdf(fnameout)
-      } else {
-        pdf(fnameout)
-      }
+      dataout[[paste(protection,":",limitscale,sep='')]] <- data
+      # if (alternate_formatting == TRUE){
+      #   pdf(fnameout)
+      # } else {
+      #   pdf(fnameout)
+      # }
       sp <- ggplot(data=data) + 
             geom_line(aes(x=acopf_x, y=acopf_y, color = "N-0")) +
             geom_line(aes(x=scacopf_x, y=scacopf_y, color = "N-1")) +
@@ -251,35 +292,102 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
                                       minor_breaks=log10_minor_break())
               if (alternate_formatting == TRUE) {
               #  sp <- sp + theme_bw()# + annotation_logticks()
-               sp <- sp + theme_bw() + annotation_logticks(base = 10, sides = "lb")
+               sp <- sp + theme_bw(base_size = 16) + annotation_logticks(base = 10, sides = "lb")
               }
             } else {
               if (alternate_formatting == TRUE) {
-               sp <- sp + theme_bw()
+               sp <- sp + theme_bw(base_size = 16)
               }
             }
-            print(sp)
-            dev.off()
+            # print(sp)
+            # dev.off()
+            path = "/Users/jakeroth/git/AC-CFM"
+            # ggsave(fnameout, device='png', path=path, dpi=700, width=8.96, height=6.44, units="in")
+            ggsave(fnameout, device='pdf', path=path, width=8.96, height=6.44, units="in")
     }
   }
+  return(dataout)
 }
 
 ##
 ## proportion
 ##
+cond_or_uncond <- "cond"
 frac_or_pu <- "pu"
 number_or_proportion <- "proportion"
 alternate_formatting <- TRUE
 for (plottype in plottypes){
-  paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion, alternate_formatting)
+  paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion, alternate_formatting, cond_or_uncond)
 }
+
+cond_or_uncond <- "uncond"
+frac_or_pu <- "pu"
+number_or_proportion <- "proportion"
+alternate_formatting <- TRUE
+for (plottype in plottypes){
+  paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion, alternate_formatting, cond_or_uncond)
+}
+
 
 ##
 ## number
 ##
+cond_or_uncond <- "cond"
 frac_or_pu <- "pu"
 number_or_proportion <- "number"
 alternate_formatting <- TRUE
 for (plottype in plottypes){
-  paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion, alternate_formatting)
+  paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion, alternate_formatting, cond_or_uncond)
 }
+
+cond_or_uncond <- "uncond"
+frac_or_pu <- "pu"
+number_or_proportion <- "number"
+alternate_formatting <- TRUE
+for (plottype in plottypes){
+  paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion, alternate_formatting, cond_or_uncond)
+}
+
+
+##
+## paper
+##
+cond_or_uncond <- "uncond"
+frac_or_pu <- "pu"
+number_or_proportion <- "proportion"
+alternate_formatting <- TRUE
+for (plottype in plottypes){
+  paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion, alternate_formatting, cond_or_uncond)
+}
+
+cond_or_uncond <- "uncond"
+frac_or_pu <- "pu"
+number_or_proportion <- "number"
+alternate_formatting <- TRUE
+for (plottype in plottypes){
+  D<-paper_plot(plottype,casebase,methods,methodlabs,protections,limitscales,frac_or_pu,number_or_proportion, alternate_formatting, cond_or_uncond)
+}
+
+
+# s <- ggplot(data=data.frame(xx=xx,yy=yy)) + geom_line(aes(x=xx,y=yy)) + scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x, n=2),
+#                                       labels = trans_format("log10", math_format(10^.x)),
+#                                       minor_breaks=log10_minor_break()) + scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x, n=2),
+#                                       labels = trans_format("log10", math_format(10^.x)),
+#                                       minor_breaks=log10_minor_break())
+
+##
+## proportion decrease stats
+##
+
+# D$`allprotection:1_20`
+# > r=c(158,155,158,134,146)
+# > 1000-r
+# [1] 842 845 842 866 854
+# > rr=r[1]
+# > (r-rr)/r
+# [1]  0.00000000 -0.01935484  0.00000000 -0.17910448 -0.08219178
+# > (rr-r)/r
+# [1] 0.00000000 0.01935484 0.00000000 0.17910448 0.08219178
+# > z=1000-r
+# > zz=z[1]
+# > (zz-z)/z
