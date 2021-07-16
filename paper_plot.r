@@ -107,8 +107,8 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
           }
           xx <- x[mask];
           yy <- y[mask];
-          avg <- mean(ypre[mask],na.rm=TRUE)
-          std <- sd(ypre[mask],na.rm=TRUE)
+          avg <- mean(ypre,na.rm=TRUE)
+          std <- sd(ypre,na.rm=TRUE)
           medcond <- median(ypre[(ypre > 0)],na.rm=TRUE)
           if (number_or_proportion == "proportion"){
             xlabel <- "L: Number of failed lines"
@@ -134,8 +134,8 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             }
             xx <- x[mask];
             yy <- y[mask];
-            avg <- mean(ypre[mask],na.rm=TRUE)
-            std <- sd(ypre[mask],na.rm=TRUE)
+            avg <- mean(ypre,na.rm=TRUE)
+            std <- sd(ypre,na.rm=TRUE)
             medcond <- median(ypre[(ypre > 0)],na.rm=TRUE)
             if (number_or_proportion == "proportion"){
               xlabel <- "x: Load shed (p.u.)"
@@ -156,8 +156,8 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             }
             xx <- x[mask];
             yy <- y[mask];
-            avg <- mean(ypre[mask],na.rm=TRUE)
-            std <- sd(ypre[mask],na.rm=TRUE)
+            avg <- mean(ypre,na.rm=TRUE)
+            std <- sd(ypre,na.rm=TRUE)
             medcond <- median(ypre[(ypre > 0)],na.rm=TRUE)
             if (number_or_proportion == "proportion"){
               xlabel <- "x: Load shed (fraction)"
@@ -186,8 +186,8 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             }
             xx <- x[mask];
             yy <- y[mask];
-            avg <- mean(ypre[mask],na.rm=TRUE)
-            std <- sd(ypre[mask],na.rm=TRUE)
+            avg <- mean(ypre,na.rm=TRUE)
+            std <- sd(ypre,na.rm=TRUE)
             medcond <- median(ypre[(ypre > 0)],na.rm=TRUE)
             if (number_or_proportion == "proportion"){
               xlabel <- "x: Load served (p.u.)"
@@ -210,8 +210,8 @@ paper_plot <- function(plottype,casebase,methods,methodlabs,protections,limitsca
             }
             xx <- x[mask];
             yy <- y[mask];
-            avg <- mean(ypre[mask],na.rm=TRUE)
-            std <- sd(ypre[mask],na.rm=TRUE)
+            avg <- mean(ypre,na.rm=TRUE)
+            std <- sd(ypre,na.rm=TRUE)
             medcond <- median(ypre[(ypre > 0)],na.rm=TRUE)
             if (number_or_proportion == "proportion"){
               xlabel <- "x: Load served (fraction)"
